@@ -157,7 +157,7 @@
                         <viewLayoutGuide key="safeArea" id="stz-qy-NwU"/>
                     </view>
                     <connections>
-                        <outlet property="emailTextfield" destination="j5s-Lc-WfT" id="PkM-7r-MqL"/>
+                        <outlet property="emailTextfield" destination="u72-XV-6FN" id="Nfc-8N-TNr"/>
                         <outlet property="passwordTextfield" destination="hLb-P9-NkF" id="uaM-fo-m8M"/>
                     </connections>
                 </viewController>
