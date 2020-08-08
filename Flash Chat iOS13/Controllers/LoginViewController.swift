@@ -21,7 +21,7 @@ class LoginViewController: UIViewController {
                 if let error = error {
                     print(error.localizedDescription) // TODO present user-friendly error to user
                 } else {
-                    self.performSegue(withIdentifier: "LoginToChat", sender: self)
+                    self.performSegue(withIdentifier: K.loginSegue, sender: self)
                 }
             }
         }
