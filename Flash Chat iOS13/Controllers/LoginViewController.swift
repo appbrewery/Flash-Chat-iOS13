@@ -29,3 +29,10 @@ class LoginViewController: UIViewController {
     }
     
 }
+
+
+/*
+    DEV LOGIN INFO.
+    email: i@email.com
+    pass:  password
+ */
