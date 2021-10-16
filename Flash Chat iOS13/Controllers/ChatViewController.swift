@@ -30,27 +30,30 @@ class ChatViewController: UIViewController {
     }
     
     func loadMessages() {
-        db.collection(K.FStore.collectionName).addSnapshotListener { querySnapshot, error in
-            self.messages = [];
-            
-            if let e = error {
-                print("There was an issue retrieving data from Firestore. \(e)")
-            } else {
-                if let snapShotDocuments = querySnapshot?.documents {
-                    for doc in snapShotDocuments {
-                        let data = doc.data()
-                        if let sender = data[K.FStore.senderField] as? String,
-                           let messageBody = data[K.FStore.bodyField] as? String {
-                            let newMessage = Message(sender: sender, body: messageBody)
-                            self.messages.append(newMessage)
-                            
-                            DispatchQueue.main.async {
-                                self.tableView.reloadData()
+        db
+            .collection(K.FStore.collectionName)
+            .order(by: K.FStore.dateField)
+            .addSnapshotListener { querySnapshot, error in
+                self.messages = [];
+                
+                if let e = error {
+                    print("There was an issue retrieving data from Firestore. \(e)")
+                } else {
+                    if let snapShotDocuments = querySnapshot?.documents {
+                        for doc in snapShotDocuments {
+                            let data = doc.data()
+                            if let sender = data[K.FStore.senderField] as? String,
+                               let messageBody = data[K.FStore.bodyField] as? String {
+                                let newMessage = Message(sender: sender, body: messageBody)
+                                self.messages.append(newMessage)
+                                
+                                DispatchQueue.main.async {
+                                    self.tableView.reloadData()
+                                }
                             }
                         }
                     }
                 }
-            }
         }
     }
     
