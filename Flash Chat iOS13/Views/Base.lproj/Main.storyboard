@@ -153,6 +153,13 @@
                                     <constraint firstAttribute="trailing" secondItem="jY9-l3-E1g" secondAttribute="trailing" id="y40-C4-FjS"/>
                                 </constraints>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="5k3-Bh-lOu">
+                                <rect key="frame" x="41" y="350" width="331" height="88"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" systemColor="systemRedColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="stz-qy-NwU"/>
                         <color key="backgroundColor" name="BrandLightBlue"/>
@@ -168,7 +175,9 @@
                     <navigationItem key="navigationItem" id="3T8-j3-x8B"/>
                     <connections>
                         <outlet property="emailTextfield" destination="u72-XV-6FN" id="Nfc-8N-TNr"/>
+                        <outlet property="errorLabel" destination="5k3-Bh-lOu" id="r4Y-d8-EFH"/>
                         <outlet property="passwordTextfield" destination="hLb-P9-NkF" id="uaM-fo-m8M"/>
+                        <segue destination="lwd-AH-u8E" kind="show" identifier="RegisterToChat" id="mlb-JM-HBo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -219,6 +228,9 @@
                                         <color key="textColor" name="BrandBlue"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                         <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                                        <connections>
+                                            <action selector="clickedPasswordField:" destination="JJr-Aj-eyW" eventType="touchDown" id="mIB-uH-aE6"/>
+                                        </connections>
                                     </textField>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xd2-nu-tMA">
                                         <rect key="frame" x="0.0" y="124" width="414" height="53"/>
@@ -247,6 +259,13 @@
                                     <constraint firstItem="mZe-tG-Gm8" firstAttribute="leading" secondItem="7JT-7R-lw4" secondAttribute="leading" id="scf-xJ-Rnr"/>
                                 </constraints>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Ry-qY-Wrj">
+                                <rect key="frame" x="186" y="350" width="0.0" height="0.0"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" systemColor="systemRedColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="ibK-5F-w36"/>
                         <color key="backgroundColor" systemColor="systemTealColor"/>
@@ -263,9 +282,11 @@
                     <connections>
                         <outlet property="emailTextfield" destination="F21-w0-z4z" id="YUG-Hl-Rxj"/>
                         <outlet property="passwordTextfield" destination="abR-gz-opL" id="xCU-X2-hrx"/>
+                        <segue destination="lwd-AH-u8E" kind="show" identifier="LoginToChat" id="S19-qv-DL6"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XcE-Gk-YZg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="JJr-Aj-eyW" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1857.9710144927537" y="643.52678571428567"/>
         </scene>
@@ -278,7 +299,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="S6L-hg-cne">
-                                <rect key="frame" x="0.0" y="44" width="414" height="758"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="714"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ReusableCell" id="fAI-uC-s9a">
@@ -370,6 +391,9 @@
             <point key="canvasLocation" x="-86.956521739130437" y="134.59821428571428"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="mlb-JM-HBo"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <image name="paperplane.fill" catalog="system" width="128" height="118"/>
         <image name="textfield" width="298" height="93"/>
@@ -387,6 +411,9 @@
         </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemTealColor">
             <color red="0.18823529411764706" green="0.69019607843137254" blue="0.7803921568627451" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
