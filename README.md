@@ -1,18 +1,18 @@
-![App Brewery Banner](Documentation/AppBreweryBanner.png)
 
-# Flash-Chat
 
-## Our Goal
+# Sun-Chatz
 
-One of the most fundamental component of modern iOS apps is the Table View. Table Views are used everywhere from the Mail app to the Messages app. It’s a crucial part of every iOS developer’s tool belt. In this tutorial we’ll be getting to grips with Table Views, creating custom cells, and making our own cloud-based backend database. It’s going to be epic, so buckle up.
+## Project Goal
 
-## What you will create
+One of the most fundamental component of modern iOS apps is the Table View. Table Views are used everywhere from the Mail app to the Messages app, so it’s a crucial part of every iOS developer’s tool belt. In this project, I’ll be getting to grips with Table Views, creating custom cells, and making my own cloud-based backend database using FireBase.
 
-Flash Chat is an internet based messaging app similar to WhatsApp, the popular messaging app that was bought by Facebook for $22 billion. We will be using a service called Firebase Firestore as a backend database to store and retrieve our messages from the cloud. 
+## What the Project is
 
-## What you will learn
+I will be using Firebase Firestore as a backend database to store and retrieve our messages from the cloud and emulate a messaging app similar to Whatsapp.
 
-* How to integrate third party libraries in your app using Cocoapods and Swift Package Manager.
+## What I've learned
+
+* How to integrate third party libraries in your app using Cocoapods/Swift Package Manager.
 * How to store data in the cloud using Firebase Firestore.
 * How to query and sort the Firebase database.
 * How to use Firebase for user authentication, registration and login.
@@ -33,13 +33,6 @@ struct K {
     static let registerSegue = "RegisterToChat"
     static let loginSegue = "LoginToChat"
     
-    struct BrandColors {
-        static let purple = "BrandPurple"
-        static let lightPurple = "BrandLightPurple"
-        static let blue = "BrandBlue"
-        static let lighBlue = "BrandLightBlue"
-    }
-    
     struct FStore {
         static let collectionName = "messages"
         static let senderField = "sender"
@@ -49,7 +42,6 @@ struct K {
 }
 
 ```
+>This is a companion project to The App Brewery's Complete App Developement Bootcamp
 
->This is a companion project to The App Brewery's Complete App Developement Bootcamp, check out the full course at [www.appbrewery.co](https://www.appbrewery.co/)
-
-![End Banner](Documentation/readme-end-banner.png)
+![App Brewery Banner](Documentation/AppBreweryBanner.png)
