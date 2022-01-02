@@ -22,6 +22,8 @@
 		748CF624278160FC002FFFFE /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 748CF623278160FC002FFFFE /* FirebaseFirestore */; };
 		748CF6272782468C002FFFFE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 748CF6262782468C002FFFFE /* Constants.swift */; };
 		748CF6292782494E002FFFFE /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 748CF6282782494E002FFFFE /* Message.swift */; };
+		748CF62C27824DAD002FFFFE /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 748CF62A27824DAD002FFFFE /* MessageCell.swift */; };
+		748CF62D27824DAD002FFFFE /* MessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 748CF62B27824DAD002FFFFE /* MessageCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +42,8 @@
 		748CF61E27815F9A002FFFFE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		748CF6262782468C002FFFFE /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		748CF6282782494E002FFFFE /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		748CF62A27824DAD002FFFFE /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
+		748CF62B27824DAD002FFFFE /* MessageCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +108,8 @@
 			isa = PBXGroup;
 			children = (
 				0B62817C235DEE8100E35CAF /* Main.storyboard */,
+				748CF62A27824DAD002FFFFE /* MessageCell.swift */,
+				748CF62B27824DAD002FFFFE /* MessageCell.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -182,6 +188,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B628183235DEE8400E35CAF /* LaunchScreen.storyboard in Resources */,
+				748CF62D27824DAD002FFFFE /* MessageCell.xib in Resources */,
 				0B628180235DEE8400E35CAF /* Assets.xcassets in Resources */,
 				748CF61F27815F9A002FFFFE /* GoogleService-Info.plist in Resources */,
 				0B62819E235F0F4D00E35CAF /* README.md in Resources */,
@@ -204,6 +211,7 @@
 				748CF6292782494E002FFFFE /* Message.swift in Sources */,
 				0B628191235DF01B00E35CAF /* ChatViewController.swift in Sources */,
 				0B62818D235DF00B00E35CAF /* RegisterViewController.swift in Sources */,
+				748CF62C27824DAD002FFFFE /* MessageCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
