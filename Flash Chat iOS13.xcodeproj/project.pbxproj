@@ -20,6 +20,8 @@
 		748CF61F27815F9A002FFFFE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 748CF61E27815F9A002FFFFE /* GoogleService-Info.plist */; };
 		748CF622278160FC002FFFFE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 748CF621278160FC002FFFFE /* FirebaseAuth */; };
 		748CF624278160FC002FFFFE /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 748CF623278160FC002FFFFE /* FirebaseFirestore */; };
+		748CF6272782468C002FFFFE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 748CF6262782468C002FFFFE /* Constants.swift */; };
+		748CF6292782494E002FFFFE /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 748CF6282782494E002FFFFE /* Message.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,8 @@
 		0B628190235DF01B00E35CAF /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		0B62819D235F0F4D00E35CAF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		748CF61E27815F9A002FFFFE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		748CF6262782468C002FFFFE /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		748CF6282782494E002FFFFE /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +84,7 @@
 				0B628181235DEE8400E35CAF /* LaunchScreen.storyboard */,
 				0B628184235DEE8400E35CAF /* Info.plist */,
 				748CF61E27815F9A002FFFFE /* GoogleService-Info.plist */,
+				748CF6262782468C002FFFFE /* Constants.swift */,
 			);
 			path = "Flash Chat iOS13";
 			sourceTree = "<group>";
@@ -106,6 +111,7 @@
 		0B628194235DF03A00E35CAF /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				748CF6282782494E002FFFFE /* Message.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -194,6 +200,8 @@
 				0B628177235DEE8100E35CAF /* AppDelegate.swift in Sources */,
 				0B628179235DEE8100E35CAF /* SceneDelegate.swift in Sources */,
 				0B62818F235DF01000E35CAF /* LoginViewController.swift in Sources */,
+				748CF6272782468C002FFFFE /* Constants.swift in Sources */,
+				748CF6292782494E002FFFFE /* Message.swift in Sources */,
 				0B628191235DF01B00E35CAF /* ChatViewController.swift in Sources */,
 				0B62818D235DF00B00E35CAF /* RegisterViewController.swift in Sources */,
 			);

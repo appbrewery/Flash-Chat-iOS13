@@ -23,13 +23,10 @@ class RegisterViewController: UIViewController {
             //sign up new users (from Firebase documentation)
             Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
                 if let e = error {
-                    Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { (timer) in
-                        self.errorLabel.text = e.localizedDescription //used in English for user to understand
+                    self.errorLabel.text = e.localizedDescription //used in English for user to understand
+                    Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { (timer) in
+                        self.errorLabel.text = ""
                     }
-                    
-                    self.errorLabel.text = ""
-                    
-                    print(e.localizedDescription)
                 } else {
                     //Successful registration -> Navigate to the ChatViewController
                     self.performSegue(withIdentifier: "RegisterToChat", sender: self)
