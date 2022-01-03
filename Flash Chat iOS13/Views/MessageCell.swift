@@ -14,9 +14,13 @@ class MessageCell: UITableViewCell {
     @IBOutlet weak var label: UILabel!
     @IBOutlet weak var rightImageView: UIImageView!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+    override func awakeFromNib() { //similar to viewDidLoad
+        super.awakeFromNib() // Initialization code
+        messageBubble.layer.cornerRadius = messageBubble.frame.size.height / 5
+        label.contentMode = .scaleToFill
+        label.numberOfLines = 0
+        
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
