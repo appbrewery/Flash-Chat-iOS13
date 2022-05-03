@@ -51,6 +51,8 @@ class ChatViewController: UIViewController {
                                 self.messages.append(Message(sender: messageSender, body: messageBody))
                                 DispatchQueue.main.async {
                                     self.tableView.reloadData()
+                                    let indexPath = IndexPath(row: self.messages.count - 1, section: 0)
+                                    self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
                                 }
                             }
                         }
@@ -71,6 +73,9 @@ class ChatViewController: UIViewController {
                     print("Error in saving in DB. \(e.localizedDescription)")
                 } else {
                     print("Saved in DB")
+                    DispatchQueue.main.async {
+                        self.messageTextfield.text = ""
+                    }
                 }
             }
         }
@@ -85,7 +90,21 @@ extension ChatViewController: UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath) as! MessageCell
-        cell.label.text = messages[indexPath.row].body
+        
+        let message = messages[indexPath.row]
+        
+        cell.label.text = message.body
+        if message.sender == Auth.auth().currentUser?.email{
+            cell.leftImageView.isHidden = true
+            cell.rightImageView.isHidden = false
+            cell.messageBuble.backgroundColor = UIColor(named: K.BrandColors.lightPurple)
+            cell.label.textColor = UIColor(named: K.BrandColors.purple)
+        } else {
+            cell.rightImageView.isHidden = true
+            cell.leftImageView.isHidden = false
+            cell.messageBuble.backgroundColor = UIColor(named: K.BrandColors.purple)
+            cell.label.textColor = UIColor(named: K.BrandColors.lightPurple)
+        }
         return cell
     }
 }
