@@ -14,11 +14,9 @@ class ChatViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var messageTextfield: UITextField!
     
-    var messages = [
-        Message(sender: "1@2.com", body: "Hey!"),
-        Message(sender: "2@3.com", body: "Hey U!"),
-        Message(sender: "1@2.com", body: "Nice talk!")
-    ]
+    let db = Firestore.firestore()
+    
+    var messages: [Message] = []
     
     @IBAction func logOutPressed(_ sender: UIBarButtonItem) {
         do {
@@ -33,12 +31,49 @@ class ChatViewController: UIViewController {
         super.viewDidLoad()
         tableView.dataSource = self
         tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
+        loadMessages()
         navigationItem.hidesBackButton = true
         title = K.appName
     }
     
-    @IBAction func sendPressed(_ sender: UIButton) {
+    private func loadMessages(){
+        db.collection(K.FStore.collectionName)
+            .order(by: K.FStore.dateField)
+            .addSnapshotListener { (querySnapshot, error) in
+                if let e = error {
+                    print("Error when getting data from DB. \(e.localizedDescription)")
+                } else {
+                    self.messages = []
+                    if let snapshotDocument = querySnapshot?.documents {
+                        for doc in snapshotDocument{
+                            let data = doc.data()
+                            if let messageSender = data[K.FStore.senderField] as? String, let messageBody = data[K.FStore.bodyField] as? String {
+                                self.messages.append(Message(sender: messageSender, body: messageBody))
+                                DispatchQueue.main.async {
+                                    self.tableView.reloadData()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+    }
     
+    @IBAction func sendPressed(_ sender: UIButton) {
+        
+        if let messageBody = messageTextfield.text, let messageSender = Auth.auth().currentUser?.email {
+            db.collection(K.FStore.collectionName).addDocument(data: [
+                K.FStore.senderField: messageSender,
+                K.FStore.bodyField: messageBody,
+                K.FStore.dateField: Date().timeIntervalSince1970
+            ]) { error in
+                if let e = error {
+                    print("Error in saving in DB. \(e.localizedDescription)")
+                } else {
+                    print("Saved in DB")
+                }
+            }
+        }
     }
 }
 
