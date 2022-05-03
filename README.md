@@ -1,3 +1,5 @@
+# Этот проект является частью курса "iOS & Swift - The Complete iOS App Development Bootcamp" от AppBrewery на Udemy https://www.udemy.com/course/ios-13-app-development-bootcamp/.
+
 ![App Brewery Banner](Documentation/AppBreweryBanner.png)
 
 # Flash-Chat
