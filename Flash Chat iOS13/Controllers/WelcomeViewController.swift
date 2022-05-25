@@ -26,7 +26,7 @@ class WelcomeViewController: UIViewController {
                 //MARK: - lastColor
                 colorNum += 1
                 if colorNum == 10{
-                    self.titleLabel.textColor = UIColor.orange
+                    self.titleLabel.textColor = UIColor.orange //which color will be last
                 }else{
                     print("...")
                 }
