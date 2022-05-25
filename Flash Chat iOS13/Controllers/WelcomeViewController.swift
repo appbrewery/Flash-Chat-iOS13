@@ -14,7 +14,17 @@ class WelcomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        var charIndex = 0.0
+        let titleText = "⚡️FlashChat"
+        //MARK: - simulation of typing && random color of text
+        let colorArray = [UIColor.red,UIColor.systemTeal,UIColor.blue,UIColor.purple,UIColor.systemPink,UIColor.gray,UIColor.cyan,UIColor.orange,UIColor.magenta,UIColor.systemIndigo]
+        for char in titleText {
+            Timer.scheduledTimer(withTimeInterval: 0.15 * charIndex, repeats: false) { (timer) in
+                self.titleLabel.text?.append(char)
+                self.titleLabel.textColor = colorArray.randomElement()
+            }
+            charIndex += 1
+        }
        
     }
     
