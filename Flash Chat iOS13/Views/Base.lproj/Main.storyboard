@@ -28,6 +28,9 @@
                                 <state key="normal" title="Log In">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
+                                <connections>
+                                    <segue destination="5v2-hE-4Ub" kind="show" id="Aq1-nZ-jMr"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y7D-jv-BlJ">
                                 <rect key="frame" x="52" y="418" width="310" height="60"/>
@@ -49,6 +52,9 @@
                                     <color key="titleColor" name="BrandBlue"/>
                                     <color key="titleShadowColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
+                                <connections>
+                                    <segue destination="BYZ-38-t0r" kind="show" id="t6x-5T-OyA"/>
+                                </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="w0w-hE-MVy"/>
@@ -69,8 +75,6 @@
                     <navigationItem key="navigationItem" id="EPV-vk-7bJ"/>
                     <connections>
                         <outlet property="titleLabel" destination="y7D-jv-BlJ" id="7U9-Ah-qfi"/>
-                        <segue destination="BYZ-38-t0r" kind="show" id="3hP-Fh-W4X"/>
-                        <segue destination="5v2-hE-4Ub" kind="show" id="zbl-7a-GXF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="X0w-oB-wTX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -165,7 +169,7 @@
                     <connections>
                         <outlet property="emailTextfield" destination="u72-XV-6FN" id="Nfc-8N-TNr"/>
                         <outlet property="passwordTextfield" destination="hLb-P9-NkF" id="uaM-fo-m8M"/>
-                        <segue destination="lwd-AH-u8E" kind="show" id="55J-MO-wtP"/>
+                        <segue destination="lwd-AH-u8E" kind="show" identifier="RegisterToChat" id="55J-MO-wtP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -260,7 +264,7 @@
                     <connections>
                         <outlet property="emailTextfield" destination="F21-w0-z4z" id="YUG-Hl-Rxj"/>
                         <outlet property="passwordTextfield" destination="abR-gz-opL" id="xCU-X2-hrx"/>
-                        <segue destination="lwd-AH-u8E" kind="show" id="ddt-iS-s7V"/>
+                        <segue destination="lwd-AH-u8E" kind="show" identifier="LoginToChat" id="ddt-iS-s7V"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XcE-Gk-YZg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -369,7 +373,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="ddt-iS-s7V"/>
+        <segue reference="55J-MO-wtP"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="paperplane.fill" catalog="system" width="128" height="118"/>
