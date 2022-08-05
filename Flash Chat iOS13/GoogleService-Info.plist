@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>410345050732-h2pj0umhot6ijsruspaei0sd6ujptkm5.apps.googleusercontent.com</string>
+	<string>378673531586-qr2h519k0an1bms8tgpqm3peshpsbnpb.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.410345050732-h2pj0umhot6ijsruspaei0sd6ujptkm5</string>
+	<string>com.googleusercontent.apps.378673531586-qr2h519k0an1bms8tgpqm3peshpsbnpb</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCFTz8DWchZLp0MucH4M7J5ADBf6sNt5N4</string>
+	<string>AIzaSyAkFCNnGX5byhhCaX9RbErKD6KiJuDwTbA</string>
 	<key>GCM_SENDER_ID</key>
-	<string>410345050732</string>
+	<string>378673531586</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>co.maonz.Flash-Chat-iOS13</string>
 	<key>PROJECT_ID</key>
-	<string>flash-char-81e71</string>
+	<string>flashchat-e6040</string>
 	<key>STORAGE_BUCKET</key>
-	<string>flash-char-81e71.appspot.com</string>
+	<string>flashchat-e6040.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:410345050732:ios:01f108d3c8d59afaaf3e49</string>
+	<string>1:378673531586:ios:92cd930a9ddadf8e4f895b</string>
 </dict>
 </plist>
