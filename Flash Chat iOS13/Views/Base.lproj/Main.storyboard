@@ -376,7 +376,7 @@
         <segue reference="ddt-iS-s7V"/>
     </inferredMetricsTieBreakers>
     <resources>
-        <image name="paperplane.fill" catalog="system" width="32" height="32"/>
+        <image name="paperplane.fill" catalog="system" width="128" height="118"/>
         <image name="textfield" width="298" height="93"/>
         <namedColor name="BrandBlue">
             <color red="0.16500000655651093" green="0.77999997138977051" blue="0.99599999189376831" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

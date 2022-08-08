@@ -20,9 +20,6 @@ class ChatViewController: UIViewController {
     let db = Firestore.firestore()
     
     var messages: [Message] = [
-        Message(sender: "1@23g.com", body: "ertertert"),
-        Message(sender: "1@23b.com", body: "cvbcvbcvbcvb"),
-        Message(sender: "1@23g.com", body: "sdfsdfsdd"),
         
     ]
     override func viewDidLoad() {
@@ -31,18 +28,51 @@ class ChatViewController: UIViewController {
         title = "⚡️FlashChat"
         navigationItem.hidesBackButton = true
         tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
-
+        loadMessages()
     }
-    
+    func loadMessages() {
+       
+        db.collection(K.FStore.collectionName)
+            .order(by: K.FStore.dateField)
+            .addSnapshotListener { querySnapshot, err in
+            if let err = err{
+                print("smth wrong \(err)")
+            }else {
+                
+                self.messages = []
+                //or//self.tableView.clearsContextBeforeDrawing
+                if let snapshotDocumets = querySnapshot?.documents {
+                    for doc in snapshotDocumets{
+                        let data = doc.data()
+                        print(doc.data())
+                        if let messageSender = data[K.FStore.senderField] as? String, let messageBody = data[K.FStore.bodyField] as? String {
+                            let newMessage = Message(sender: messageSender, body: messageBody)
+                            self.messages.append(newMessage)
+                            
+                            DispatchQueue.main.async {
+                                self.tableView.reloadData()
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
     @IBAction func sendPressed(_ sender: UIButton) {
-        if let messageBody = messageTextfield.text, let messageSender = Auth.auth().currentUser?.email{
+        if let messageBody = messageTextfield.text, let messageSender = Auth.auth().currentUser?.email {
             db.collection(K.FStore.collectionName).addDocument(data: [
             K.FStore.senderField: messageSender,
-            K.FStore.bodyField: messageBody ]) { err in
+            K.FStore.bodyField: messageBody,
+            K.FStore.dateField: Date().timeIntervalSince1970]) { err in
                 if let err = err {
                     print("trouble in data sender \(err)")
                 }else{
                     print("bebra deployed to space")
+                    
+                    DispatchQueue.main.async {
+                        self.loadMessages()
+                    }
                 }
             }
         }
