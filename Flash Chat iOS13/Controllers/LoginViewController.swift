@@ -12,6 +12,12 @@ import FirebaseCore
 
 class LoginViewController: UIViewController {
 
+    @IBAction func accountSwith(_ sender: UISegmentedControl) {
+        emailTextfield.text = "2@23g.com"
+        passwordTextfield.text = "werwer123"
+        print(sender)
+    }
+
     @IBOutlet weak var emailTextfield: UITextField!
     @IBOutlet weak var passwordTextfield: UITextField!
     

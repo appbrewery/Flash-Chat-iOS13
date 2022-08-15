@@ -248,6 +248,17 @@
                                     <constraint firstItem="mZe-tG-Gm8" firstAttribute="leading" secondItem="7JT-7R-lw4" secondAttribute="leading" id="scf-xJ-Rnr"/>
                                 </constraints>
                             </view>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="y8Z-oU-LAf">
+                                <rect key="frame" x="153" y="433" width="108" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <segments>
+                                    <segment title="1"/>
+                                    <segment title="2"/>
+                                </segments>
+                                <connections>
+                                    <action selector="accountSwith:" destination="5v2-hE-4Ub" eventType="valueChanged" id="Xek-Bo-HuY"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="ibK-5F-w36"/>
                         <color key="backgroundColor" red="0.1647058824" green="0.78039215689999997" blue="0.99607843139999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
