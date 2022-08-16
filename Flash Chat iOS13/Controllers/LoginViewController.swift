@@ -11,27 +11,27 @@ import FirebaseAuth
 import FirebaseCore
 
 class LoginViewController: UIViewController {
-
+    
     @IBAction func accountSwith(_ sender: UISegmentedControl) {
         emailTextfield.text = "2@23g.com"
         passwordTextfield.text = "werwer123"
         print(sender)
     }
-
+    
     @IBOutlet weak var emailTextfield: UITextField!
     @IBOutlet weak var passwordTextfield: UITextField!
     
-
+    
     @IBAction func loginPressed(_ sender: UIButton) {
         if let email = emailTextfield.text, let password = passwordTextfield.text{
-        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
-            if let e = error {
-                print(e)
-            } else {
-                self.performSegue(withIdentifier: K.loginSegue, sender: self)
+            Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+                if let e = error {
+                    print(e)
+                } else {
+                    self.performSegue(withIdentifier: K.loginSegue, sender: self)
+                }
+                
             }
-          
         }
     }
-}
 }
