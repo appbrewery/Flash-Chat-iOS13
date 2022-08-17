@@ -346,7 +346,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="Q5u-eL-Bgp">
                         <barButtonItem key="rightBarButtonItem" title="Log out" id="dI4-I1-waz">
-                            <color key="tintColor" name="BrandPurple"/>
+                            <color key="tintColor" name="BrandLightBlue"/>
                             <connections>
                                 <action selector="logOutPressed:" destination="lwd-AH-u8E" id="2Rv-td-kfA"/>
                             </connections>
