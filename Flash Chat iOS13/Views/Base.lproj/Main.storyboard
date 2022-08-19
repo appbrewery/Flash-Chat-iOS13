@@ -290,10 +290,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="S6L-hg-cne">
-                                <rect key="frame" x="0.0" y="88" width="414" height="714"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xlo-0G-XA6">
                                 <rect key="frame" x="0.0" y="802" width="414" height="60"/>
                                 <subviews>
@@ -331,9 +327,14 @@
                                     <constraint firstAttribute="trailing" secondItem="pym-e9-R2r" secondAttribute="trailing" constant="20" id="ycp-Iy-yM8"/>
                                 </constraints>
                             </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="S6L-hg-cne">
+                                <rect key="frame" x="0.0" y="88" width="414" height="714"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6YX-ca-E8f"/>
                         <color key="backgroundColor" name="BrandPurple"/>
+                        <color key="tintColor" systemColor="labelColor"/>
                         <constraints>
                             <constraint firstItem="S6L-hg-cne" firstAttribute="trailing" secondItem="6YX-ca-E8f" secondAttribute="trailing" id="DBU-jl-PPO"/>
                             <constraint firstItem="xlo-0G-XA6" firstAttribute="leading" secondItem="6YX-ca-E8f" secondAttribute="leading" id="JMa-Pn-SZL"/>
@@ -406,6 +407,9 @@
         <namedColor name="BrandPurple">
             <color red="0.67500001192092896" green="0.43500000238418579" blue="0.9179999828338623" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
