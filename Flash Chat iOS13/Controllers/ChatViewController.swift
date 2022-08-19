@@ -44,7 +44,6 @@ class ChatViewController: UIViewController {
                     if let snapshotDocumets = querySnapshot?.documents {
                         for doc in snapshotDocumets{
                             let data = doc.data()
-                            print(doc.data())
                             if let messageSender = data[K.FStore.senderField] as? String, let messageBody = data[K.FStore.bodyField] as? String {
                                 let newMessage = Message(sender: messageSender, body: messageBody)
                                 self.messages.append(newMessage)
@@ -69,7 +68,6 @@ class ChatViewController: UIViewController {
                     if let err = err {
                         print("trouble in data sender \(err)")
                     }else{
-                        print("bebra deployed to space")
                         self.messageTextfield.text = ""
                         
                         DispatchQueue.main.async {
