@@ -10,12 +10,20 @@ import UIKit
 
 class WelcomeViewController: UIViewController {
 
-    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var titleLabel: UILabel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-       
+		let titleText = Constants.appName
+		var charIndex = 0
+		titleLabel?.text = String()
+		for char in titleText {
+			let timeInterval = 0.1 * Double(charIndex)
+			Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: false) { timer in
+				self.titleLabel?.text?.append(char)
+			}
+			charIndex += 1
+		}
     }
     
 

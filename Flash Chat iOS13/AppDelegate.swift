@@ -7,16 +7,24 @@
 //
 
 import UIKit
+import IQKeyboardManagerSwift
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+		configureKeyboard()
+		FirebaseApp.configure()
         return true
     }
+
+	func configureKeyboard() {
+		IQKeyboardManager.shared.enable = true
+		IQKeyboardManager.shared.enableAutoToolbar = false
+		IQKeyboardManager.shared.shouldResignOnTouchOutside = true
+	}
 
     // MARK: UISceneSession Lifecycle
 
@@ -31,6 +39,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
+
+	static func showError(_ error: Error, customMessage message: String? = nil, inViewController viewController: UIViewController) {
+		let alert = UIAlertController(title: message ?? error.localizedDescription, message: nil, preferredStyle: .alert)
+		let dismissAction = UIAlertAction(title: "OK", style: .default)
+		alert.addAction(dismissAction)
+		let haptics = UINotificationFeedbackGenerator()
+		haptics.notificationOccurred(.error)
+		viewController.present(alert, animated: true)
+	}
 
 
 }
