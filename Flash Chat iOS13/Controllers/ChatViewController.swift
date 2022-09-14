@@ -45,7 +45,9 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 							let newMessage = Message(sender: sender, body: body)
 							messages.append(newMessage)
 							DispatchQueue.main.async { [self] in
+								let indexPath = IndexPath(row: messages.count - 1, section: 0)
 								tableView?.reloadData()
+								tableView?.scrollToRow(at: indexPath, at: .top, animated: true)
 							}
 						}
 					}
@@ -63,11 +65,13 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 				Constants.FStore.bodyField : messageBody,
 				Constants.FStore.dateField : currentDate.timeIntervalSince1970
 			]
-			database.collection(Constants.FStore.collectionName).addDocument(data: data) { error in
+			database.collection(Constants.FStore.collectionName).addDocument(data: data) { [self] error in
 				if let error = error {
 					AppDelegate.showError(error, inViewController: self)
 				} else {
-
+					DispatchQueue.main.async { [self] in
+						messageTextfield?.text?.removeAll()
+					}
 				}
 			}
 		}
@@ -93,8 +97,22 @@ extension ChatViewController {
 	}
 
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let message = messages[indexPath.row]
+		let currentUser = Auth.auth().currentUser?.email
 		let cell =  tableView.dequeueReusableCell(withIdentifier: Constants.cellIdentifier, for: indexPath) as? MessageCell
-		cell?.label?.text = messages[indexPath.row].body
+		cell?.label?.text = message.body
+		if message.sender == currentUser {
+			cell?.leftImageView?.isHidden = true
+			cell?.rightImageView?.isHidden = false
+			cell?.messageBubble?.backgroundColor = UIColor(named: Constants.BrandColors.lightPurple)
+			cell?.label?.textColor = UIColor(named: Constants.BrandColors.purple)
+		} else {
+			cell?.leftImageView?.isHidden = false
+			cell?.rightImageView?.isHidden = true
+			cell?.messageBubble?.backgroundColor = UIColor(named: Constants.BrandColors.purple)
+			cell?.label?.textColor = UIColor(named: Constants.BrandColors.lightPurple)
+
+		}
 		return cell!
 	}
 
