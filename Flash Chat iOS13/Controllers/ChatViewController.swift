@@ -34,6 +34,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 			.order(by: Constants.FStore.dateField, descending: false)
 			.addSnapshotListener { [self] (querySnapshot, error) in
 			messages = []
+			guard Auth.auth().currentUser != nil else { return }
 			if let error = error {
 				AppDelegate.showError(error, inViewController: self)
 			} else {
