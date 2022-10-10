@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
 
     @IBOutlet weak var tableView: UITableView?
 
@@ -24,6 +24,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 		title = Constants.appName
 		tableView?.delegate = self
 		tableView?.dataSource = self
+		messageTextfield?.delegate = self
 		navigationItem.hidesBackButton = true
 		tableView?.register(UINib(nibName: Constants.cellNibName, bundle: nil), forCellReuseIdentifier: Constants.cellIdentifier)
 		loadMessages()
@@ -57,7 +58,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 		}
 	}
     
-    @IBAction func sendPressed(_ sender: UIButton) {
+    @IBAction func sendPressed(_ sender: Any) {
 		if let messageBody = messageTextfield?.text,
 		   let messageSender = Auth.auth().currentUser?.email {
 			let currentDate = Date()
@@ -87,6 +88,11 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 			AppDelegate.showError(signOutError, inViewController: self)
 		}
 		
+	}
+
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+		sendPressed(textField)
+		return true
 	}
 
 }

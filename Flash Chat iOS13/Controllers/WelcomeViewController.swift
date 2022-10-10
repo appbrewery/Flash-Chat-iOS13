@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class WelcomeViewController: UIViewController {
 
@@ -22,8 +23,8 @@ class WelcomeViewController: UIViewController {
 		navigationController?.isNavigationBarHidden = false
 	}
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+	override func viewDidLoad() {
+		super.viewDidLoad()
 		let titleText = Constants.appName
 		var charIndex = 0
 		titleLabel?.text = String()
@@ -33,6 +34,9 @@ class WelcomeViewController: UIViewController {
 				self.titleLabel?.text?.append(char)
 			}
 			charIndex += 1
+		}
+		if Auth.auth().currentUser != nil {
+			performSegue(withIdentifier: Constants.welcomeBackSegue, sender: self)
 		}
     }
     

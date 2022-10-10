@@ -9,13 +9,20 @@
 import UIKit
 import Firebase
 
-class LoginViewController: UIViewController {
+class LoginViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var emailTextfield: UITextField!
 
     @IBOutlet weak var passwordTextfield: UITextField!
 
-    @IBAction func loginPressed(_ sender: UIButton) {
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		emailTextfield.delegate = self
+		passwordTextfield.delegate = self
+		emailTextfield.becomeFirstResponder()
+	}
+
+    @IBAction func loginPressed(_ sender: Any) {
 		if let email = emailTextfield?.text,
 		   let password = passwordTextfield?.text {
 			Auth.auth().signIn(withEmail: email, password: password) { [self] authResult, error in
@@ -29,6 +36,16 @@ class LoginViewController: UIViewController {
 			}
 		}
 
+	}
+
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+		if emailTextfield.isEditing {
+			emailTextfield.endEditing(true)
+			passwordTextfield.becomeFirstResponder()
+		} else if passwordTextfield.isEditing {
+			loginPressed(textField)
+		}
+		return true
 	}
     
 }

@@ -18,6 +18,8 @@ struct Constants {
 
 	static let loginSegue = "LoginToChat"
 
+	static let welcomeBackSegue = "WelcomeBackUser"
+
 	struct BrandColors {
 
 		static let purple = "BrandPurple"
