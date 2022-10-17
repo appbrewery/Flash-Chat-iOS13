@@ -18,6 +18,10 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 	let database = Firestore.firestore()
 
 	var messages: [Message] = []
+
+	var selectedThread: Thread? = nil
+
+	let messagesForSelectedThread = Constants.FStore.collectionName
     
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -25,13 +29,14 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 		tableView?.delegate = self
 		tableView?.dataSource = self
 		messageTextfield?.delegate = self
-		navigationItem.hidesBackButton = true
-		tableView?.register(UINib(nibName: Constants.cellNibName, bundle: nil), forCellReuseIdentifier: Constants.cellIdentifier)
-		loadMessages()
+		tableView?.register(UINib(nibName: Constants.cellNibName, bundle: nil), forCellReuseIdentifier: Constants.bubbleCellIdentifier)
+		if let thread = selectedThread {
+			loadMessages(for: thread)
+		}
 	}
 
-	func loadMessages() {
-		database.collection(Constants.FStore.collectionName)
+	func loadMessages(for thread: Thread) {
+		database.collection(Constants.FStore.threadsCollectionName).document(selectedThread?.idString ?? UUID().uuidString).collection(Constants.FStore.bubblesField)
 			.order(by: Constants.FStore.dateField, descending: false)
 			.addSnapshotListener { [self] (querySnapshot, error) in
 			messages = []
@@ -67,7 +72,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 				Constants.FStore.bodyField : messageBody,
 				Constants.FStore.dateField : currentDate.timeIntervalSince1970
 			]
-			database.collection(Constants.FStore.collectionName).addDocument(data: data) { [self] error in
+			database.collection(Constants.FStore.threadsCollectionName).document(selectedThread?.idString ?? UUID().uuidString).collection(Constants.FStore.bubblesField).addDocument(data: data) { [self] error in
 				if let error = error {
 					AppDelegate.showError(error, inViewController: self)
 				} else {
@@ -106,7 +111,7 @@ extension ChatViewController {
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let message = messages[indexPath.row]
 		let currentUser = Auth.auth().currentUser?.email
-		let cell =  tableView.dequeueReusableCell(withIdentifier: Constants.cellIdentifier, for: indexPath) as? MessageCell
+		let cell = tableView.dequeueReusableCell(withIdentifier: Constants.bubbleCellIdentifier, for: indexPath) as? MessageCell
 		cell?.label?.text = message.body
 		if message.sender == currentUser {
 			cell?.leftImageView?.isHidden = true
