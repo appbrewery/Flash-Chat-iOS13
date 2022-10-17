@@ -10,13 +10,17 @@ struct Constants {
 
 	static let appName = "⚡️FlashChat"
 
-	static let cellIdentifier = "ReusableCell"
+	static let threadCellIdentifier = "ThreadCell"
+
+	static let bubbleCellIdentifier = "BubbleCell"
 
 	static let cellNibName = "MessageCell"
 
 	static let registerSegue = "RegisterToChat"
 
 	static let loginSegue = "LoginToChat"
+
+	static let threadSegue = "ShowThread"
 
 	static let welcomeBackSegue = "WelcomeBackUser"
 
@@ -36,7 +40,15 @@ struct Constants {
 
 		static let collectionName = "messages"
 
+		static let threadsCollectionName = "threads"
+
+		static let bubblesField = "bubbles"
+
 		static let senderField = "sender"
+
+		static let recipientsField = "recipients"
+
+		static let idField = "id"
 
 		static let bodyField = "body"
 
