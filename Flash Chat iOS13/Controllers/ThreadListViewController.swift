@@ -91,7 +91,12 @@ class ThreadListViewController: UITableViewController {
 		let cell = tableView.dequeueReusableCell(withIdentifier: Constants.threadCellIdentifier, for: indexPath)
 		let row = indexPath.row
 		var contentConfiguration = UIListContentConfiguration.cell()
-		contentConfiguration.text = "\(threads[row].recipients.first!), \(threads[row].recipients.last!)"
+		var recipientsExcludingSender = threads[row].recipients
+		recipientsExcludingSender.removeAll { recipient in
+			return recipient == Auth.auth().currentUser?.email
+		}
+		let recipients = recipientsExcludingSender.joined()
+		contentConfiguration.text = recipients
 		cell.contentConfiguration = contentConfiguration
 		cell.accessoryType = .disclosureIndicator
         return cell
