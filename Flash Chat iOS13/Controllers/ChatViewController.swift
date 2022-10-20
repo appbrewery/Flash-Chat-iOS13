@@ -143,7 +143,7 @@ extension ChatViewController {
 
 	func deleteMessage(at row: Int) {
 		let alert = UIAlertController(title: "Delete this message?", message: "The recipients will no longer see it!", preferredStyle: .alert)
-		let deleteAction = UIAlertAction(title: "Delete", style: .destructive) {
+		let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { action in 
 			database.collection(Constants.FStore.threadsCollectionName).document((selectedThread?.idString)!).collection(Constants.FStore.bubblesField).getDocuments() { (querySnapshot, error) in
 				if let error = error {
 					AppDelegate.showError(error, inViewController: self)
