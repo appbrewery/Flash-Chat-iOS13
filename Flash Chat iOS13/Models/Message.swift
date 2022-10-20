@@ -14,4 +14,6 @@ struct Message {
 
 	let body: String
 
+	let idString: String
+
 }

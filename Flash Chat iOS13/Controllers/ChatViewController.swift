@@ -36,7 +36,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 	}
 
 	func loadMessages(for thread: Thread) {
-		database.collection(Constants.FStore.threadsCollectionName).document(selectedThread?.idString ?? UUID().uuidString).collection(Constants.FStore.bubblesField)
+		database.collection(Constants.FStore.threadsCollectionName).document((selectedThread?.idString)!).collection(Constants.FStore.bubblesField)
 			.order(by: Constants.FStore.dateField, descending: false)
 			.addSnapshotListener { [self] (querySnapshot, error) in
 			messages = []
@@ -48,8 +48,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 					for doc in snapshotDocuments {
 						let data = doc.data()
 						if let sender = data[Constants.FStore.senderField] as? String,
-						   let body = data[Constants.FStore.bodyField] as? String {
-							let newMessage = Message(sender: sender, body: body)
+						   let body = data[Constants.FStore.bodyField] as? String, let idString = data[Constants.FStore.idField] as? String {
+							let newMessage = Message(sender: sender, body: body, idString: idString)
 							messages.append(newMessage)
 							DispatchQueue.main.async { [self] in
 								let indexPath = IndexPath(row: messages.count - 1, section: 0)
@@ -68,11 +68,12 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 		   let messageSender = Auth.auth().currentUser?.email {
 			let currentDate = Date()
 			let data: [String : Any] = [
+				Constants.FStore.idField : UUID().uuidString,
 				Constants.FStore.senderField : messageSender,
 				Constants.FStore.bodyField : messageBody,
 				Constants.FStore.dateField : currentDate.timeIntervalSince1970
 			]
-			database.collection(Constants.FStore.threadsCollectionName).document(selectedThread?.idString ?? UUID().uuidString).collection(Constants.FStore.bubblesField).addDocument(data: data) { [self] error in
+			database.collection(Constants.FStore.threadsCollectionName).document((selectedThread?.idString)!).collection(Constants.FStore.bubblesField).addDocument(data: data) { [self] error in
 				if let error = error {
 					AppDelegate.showError(error, inViewController: self)
 				} else {
@@ -131,5 +132,43 @@ extension ChatViewController {
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		print(indexPath.row)
 	}
+
+	// Override to support editing the table view.
+	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+		if editingStyle == .delete {
+			// Delete the row from the data source
+			deleteMessage(at: indexPath.row)
+		}
+	}
+
+	func deleteMessage(at row: Int) {
+		let alert = UIAlertController(title: "Delete this message?", message: "The recipients will no longer see it!", preferredStyle: .alert)
+		let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [self] action in 
+			database.collection(Constants.FStore.threadsCollectionName).document((selectedThread?.idString)!).collection(Constants.FStore.bubblesField).getDocuments() { (querySnapshot, error) in
+				if let error = error {
+					AppDelegate.showError(error, inViewController: self)
+				} else {
+					if let bubbles = querySnapshot?.documents {
+						for bubble in bubbles {
+							if bubble == bubbles[row] {
+								self.database.collection(Constants.FStore.threadsCollectionName).document((self.selectedThread?.idString)!).collection(Constants.FStore.bubblesField).document(bubble.documentID).delete { [self]
+									error in
+									if let error = error {
+										AppDelegate.showError(error, inViewController: self)
+									} else {
+										tableView?.reloadData()
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+
+		alert.addAction(deleteAction)
+	}
+
 
 }
