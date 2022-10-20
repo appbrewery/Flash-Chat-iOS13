@@ -15,13 +15,15 @@ class ThreadListViewController: UITableViewController {
 
 	let database = Firestore.firestore()
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		navigationController?.navigationItem.hidesBackButton = true
 		loadThreads()
-    }
+	}
 
 	func loadThreads() {
 		database.collection(Constants.FStore.threadsCollectionName)
+			.whereField(Constants.FStore.recipientsField, arrayContains: (Auth.auth().currentUser?.email)!)
 			.order(by: Constants.FStore.dateField, descending: false)
 			.addSnapshotListener { [self] (querySnapshot, error) in
 				threads = []
@@ -81,11 +83,11 @@ class ThreadListViewController: UITableViewController {
 		present(alert, animated: true)
 	}
 
-    // MARK: - Table view data source
+	// MARK: - Table view data source
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return threads.count
-    }
+	}
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: Constants.threadCellIdentifier, for: indexPath)
@@ -99,33 +101,55 @@ class ThreadListViewController: UITableViewController {
 		contentConfiguration.text = recipients
 		cell.contentConfiguration = contentConfiguration
 		cell.accessoryType = .disclosureIndicator
-        return cell
-    }
+		return cell
+	}
 
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        }
-    }
+
+	// Override to support editing the table view.
+	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+		if editingStyle == .delete {
+			// Delete the row from the data source
+			database.collection(Constants.FStore.threadsCollectionName).getDocuments() { (querySnapshot, error) in
+				if let error = error {
+					AppDelegate.showError(error, inViewController: self)
+				} else {
+					if let documents = querySnapshot?.documents {
+						for document in documents {
+							if document == documents[indexPath.row] {
+								self.database.collection(Constants.FStore.threadsCollectionName).document(document.documentID).delete { [self]
+									error in
+									if let error = error {
+										AppDelegate.showError(error, inViewController: self)
+									} else {
+										tableView.reloadData()
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		goToThread()
 	}
 
-    // MARK: - Navigation
+	// MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
+	// In a storyboard-based application, you will often want to do a little preparation before navigation
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+		// Get the new view controller using segue.destination.
 		if let chatVC = segue.destination as? ChatViewController {
 			// Pass the selected object to the new view controller.
 			if let selectedRow = tableView.indexPathForSelectedRow?.row {
 				chatVC.selectedThread = threads[selectedRow]
+			} else {
+				chatVC.selectedThread = threads.last!
 			}
 		}
-    }
+	}
 
 	func goToThread() {
 		performSegue(withIdentifier: Constants.threadSegue, sender: self)
