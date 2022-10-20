@@ -166,8 +166,8 @@ extension ChatViewController {
 			}
 		}
 		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
-
 		alert.addAction(deleteAction)
+		alert.addAction(cancelAction)
 	}
 
 
