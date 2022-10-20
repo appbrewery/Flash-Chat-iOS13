@@ -17,7 +17,6 @@ class ThreadListViewController: UITableViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		navigationController?.navigationItem.hidesBackButton = true
 		loadThreads()
 	}
 
@@ -113,10 +112,10 @@ class ThreadListViewController: UITableViewController {
 				if let error = error {
 					AppDelegate.showError(error, inViewController: self)
 				} else {
-					if let documents = querySnapshot?.documents {
-						for document in documents {
-							if document == documents[indexPath.row] {
-								self.database.collection(Constants.FStore.threadsCollectionName).document(document.documentID).delete { [self]
+					if let threads = querySnapshot?.documents {
+						for thread in threads {
+							if thread == threads[indexPath.row] {
+								self.database.collection(Constants.FStore.threadsCollectionName).document(thread.documentID).delete { [self]
 									error in
 									if let error = error {
 										AppDelegate.showError(error, inViewController: self)

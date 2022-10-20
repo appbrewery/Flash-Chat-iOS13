@@ -148,10 +148,10 @@ extension ChatViewController {
 				if let error = error {
 					AppDelegate.showError(error, inViewController: self)
 				} else {
-					if let documents = querySnapshot?.documents {
-						for document in documents {
-							if document == documents[row] {
-								self.database.collection(Constants.FStore.threadsCollectionName).document((self.selectedThread?.idString)!).collection(Constants.FStore.bubblesField).document(document.documentID).delete { [self]
+					if let bubbles = querySnapshot?.documents {
+						for bubble in bubbles {
+							if bubble == bubbles[row] {
+								self.database.collection(Constants.FStore.threadsCollectionName).document((self.selectedThread?.idString)!).collection(Constants.FStore.bubblesField).document(bubble.documentID).delete { [self]
 									error in
 									if let error = error {
 										AppDelegate.showError(error, inViewController: self)
