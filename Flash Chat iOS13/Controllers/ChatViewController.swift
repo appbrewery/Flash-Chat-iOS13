@@ -48,8 +48,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 					for doc in snapshotDocuments {
 						let data = doc.data()
 						if let sender = data[Constants.FStore.senderField] as? String,
-						   let body = data[Constants.FStore.bodyField] as? String, let idString = data[Constants.FStore.idField] as? String {
-							let newMessage = Message(sender: sender, body: body, idString: idString)
+						   let body = data[Constants.FStore.bodyField] as? String {
+							let newMessage = Message(sender: sender, body: body, idString: doc.documentID)
 							messages.append(newMessage)
 							DispatchQueue.main.async { [self] in
 								let indexPath = IndexPath(row: messages.count - 1, section: 0)
@@ -68,11 +68,11 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 		   let messageSender = Auth.auth().currentUser?.email {
 			let currentDate = Date()
 			let data: [String : Any] = [
-				Constants.FStore.idField : UUID().uuidString,
 				Constants.FStore.senderField : messageSender,
 				Constants.FStore.bodyField : messageBody,
 				Constants.FStore.dateField : currentDate.timeIntervalSince1970
 			]
+			print(selectedThread?.idString ?? "error")
 			database.collection(Constants.FStore.threadsCollectionName).document((selectedThread?.idString)!).collection(Constants.FStore.bubblesField).addDocument(data: data) { [self] error in
 				if let error = error {
 					AppDelegate.showError(error, inViewController: self)
@@ -82,6 +82,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 					}
 				}
 			}
+			print(selectedThread?.idString ?? "error")
 		}
     }
     
@@ -168,6 +169,7 @@ extension ChatViewController {
 		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
 		alert.addAction(deleteAction)
 		alert.addAction(cancelAction)
+		present(alert, animated: true)
 	}
 
 
