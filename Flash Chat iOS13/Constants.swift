@@ -48,8 +48,6 @@ struct Constants {
 
 		static let recipientsField = "recipients"
 
-		static let idField = "id"
-
 		static let bodyField = "body"
 
 		static let dateField = "date"

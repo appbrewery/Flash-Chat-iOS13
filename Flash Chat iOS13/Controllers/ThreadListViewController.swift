@@ -34,8 +34,8 @@ class ThreadListViewController: UITableViewController {
 						for doc in snapshotDocuments {
 							let data = doc.data()
 							if let recipients = data[Constants.FStore.recipientsField] as? [String],
-							   let bubbles = data[Constants.FStore.bubblesField] as? [Message], let idString = data[Constants.FStore.idField] as? String {
-								let newThread = Thread(idString: idString, recipients: recipients, messageBubbles: bubbles)
+							   let bubbles = data[Constants.FStore.bubblesField] as? [Message] {
+								let newThread = Thread(idString: doc.documentID, recipients: recipients, messageBubbles: bubbles)
 								threads.append(newThread)
 								DispatchQueue.main.async { [self] in
 									let indexPath = IndexPath(row: threads.count - 1, section: 0)
@@ -60,7 +60,6 @@ class ThreadListViewController: UITableViewController {
 					Constants.FStore.senderField : messageSender,
 					Constants.FStore.bubblesField : [Message](),
 					Constants.FStore.recipientsField : [messageSender, recipient],
-					Constants.FStore.idField : UUID().uuidString,
 					Constants.FStore.dateField : Date()
 				]
 				database.collection(Constants.FStore.threadsCollectionName).addDocument(data: data) { [self] error in
@@ -108,13 +107,30 @@ class ThreadListViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 			// Delete the row from the data source
-			database.collection(Constants.FStore.threadsCollectionName).getDocuments() { (querySnapshot, error) in
+			database.collection(Constants.FStore.threadsCollectionName).getDocuments() { (threadQuerySnapshot, error) in
 				if let error = error {
 					AppDelegate.showError(error, inViewController: self)
 				} else {
-					if let threads = querySnapshot?.documents {
+					if let threads = threadQuerySnapshot?.documents {
 						for thread in threads {
 							if thread == threads[indexPath.row] {
+								self.database.collection(Constants.FStore.threadsCollectionName).document(thread.documentID).collection(Constants.FStore.bubblesField).getDocuments { bubbleQuerySnapshot, error in
+									if let error = error {
+										fatalError("Can't get bubbles: \(error)")
+									}
+									if let bubbles = bubbleQuerySnapshot?.documents {
+										for bubble in bubbles {
+											self.database.collection(Constants.FStore.threadsCollectionName).document(thread.documentID).collection(Constants.FStore.bubblesField).document(bubble.documentID).delete { [self]
+												error in
+												if let error = error {
+													AppDelegate.showError(error, inViewController: self)
+												}
+											}
+										}
+									} else {
+										fatalError("Can't get bubbles: Unknown error")
+									}
+								}
 								self.database.collection(Constants.FStore.threadsCollectionName).document(thread.documentID).delete { [self]
 									error in
 									if let error = error {
