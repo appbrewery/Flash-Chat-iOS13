@@ -21,6 +21,7 @@ class ThreadListViewController: UITableViewController {
 	}
 
 	func loadThreads() {
+
 		database.collection(Constants.FStore.threadsCollectionName)
 			.whereField(Constants.FStore.recipientsField, arrayContains: (Auth.auth().currentUser?.email)!)
 			.order(by: Constants.FStore.dateField, descending: false)
@@ -54,6 +55,7 @@ class ThreadListViewController: UITableViewController {
 		var textField = UITextField()
 		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
 		let addAction = UIAlertAction(title: "Add", style: .default) { [self] (action) in
+
 			if let messageSender = Auth.auth().currentUser?.email {
 				let recipient = textField.text ?? messageSender
 				let data: [String : Any] = [
@@ -78,6 +80,36 @@ class ThreadListViewController: UITableViewController {
 		alert.addTextField { alertTextField in
 			textField = alertTextField
 		}
+		present(alert, animated: true)
+	}
+
+	@IBAction func logOutPressed(_ sender: Any) {
+		let firebaseAuth = Auth.auth()
+		do {
+			try firebaseAuth.signOut()
+			navigationController?.popToRootViewController(animated: true)
+		} catch let signOutError as NSError {
+			AppDelegate.showError(signOutError, inViewController: self)
+		}
+	}
+
+	@IBAction func deleteUser(_ sender: Any) {
+		let alert = UIAlertController(title: "Are you sure you really want to delete this user?", message: "This can't be undone!", preferredStyle: .alert)
+		let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { action in
+		if let user = Auth.auth().currentUser {
+			user.delete { error in
+				if let error = error {
+					AppDelegate.showError(error, inViewController: self)
+				} else {
+					// Account deleted.
+					self.navigationController?.popToRootViewController(animated: true)
+				}
+			}
+			}
+		}
+		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+		alert.addAction(deleteAction)
+		alert.addAction(cancelAction)
 		present(alert, animated: true)
 	}
 
@@ -116,7 +148,7 @@ class ThreadListViewController: UITableViewController {
 							if thread == threads[indexPath.row] {
 								self.database.collection(Constants.FStore.threadsCollectionName).document(thread.documentID).collection(Constants.FStore.bubblesField).getDocuments { bubbleQuerySnapshot, error in
 									if let error = error {
-										fatalError("Can't get bubbles: \(error)")
+										AppDelegate.showError(error, inViewController: self)
 									}
 									if let bubbles = bubbleQuerySnapshot?.documents {
 										for bubble in bubbles {
@@ -127,8 +159,6 @@ class ThreadListViewController: UITableViewController {
 												}
 											}
 										}
-									} else {
-										fatalError("Can't get bubbles: Unknown error")
 									}
 								}
 								self.database.collection(Constants.FStore.threadsCollectionName).document(thread.documentID).delete { [self]

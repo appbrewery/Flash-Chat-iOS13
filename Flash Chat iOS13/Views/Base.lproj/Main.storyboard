@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ybQ-XL-3RB">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21225" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ybQ-XL-3RB">
     <device id="retina6_1" orientation="portrait" appearance="dark"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21504"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21207"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="UIMenu" message="Requires Xcode 11 or later." minToolsVersion="11.0" requiredIntegratedClassName="UICommandDiff"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -333,13 +334,7 @@
                             <constraint firstItem="S6L-hg-cne" firstAttribute="top" secondItem="6YX-ca-E8f" secondAttribute="top" id="sQt-L5-8LV"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="Q5u-eL-Bgp">
-                        <barButtonItem key="rightBarButtonItem" title="Log Out" id="g6W-p4-o4c">
-                            <connections>
-                                <action selector="logOutPressed:" destination="lwd-AH-u8E" id="1uj-vR-uEe"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="Q5u-eL-Bgp"/>
                     <connections>
                         <outlet property="messageTextfield" destination="UWj-GQ-Vph" id="INS-Xk-EA9"/>
                         <outlet property="tableView" destination="S6L-hg-cne" id="dTJ-K9-WAe"/>
@@ -357,6 +352,25 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <button key="tableFooterView" opaque="NO" contentMode="scaleToFill" showsMenuAsPrimaryAction="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="zdv-p5-yTw">
+                            <rect key="frame" x="0.0" y="121.5" width="414" height="44"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <menu key="menu" id="hLD-ar-lmU">
+                                <children>
+                                    <command title="Log Out" id="ZQc-uz-Yzm">
+                                        <connections>
+                                            <action selector="logOutPressed:" destination="4xn-3H-f17" id="uVM-Tg-pwU"/>
+                                        </connections>
+                                    </command>
+                                    <command title="Delete User" id="5Ef-6e-6mN">
+                                        <connections>
+                                            <action selector="deleteUser:" destination="4xn-3H-f17" id="mLA-aB-AET"/>
+                                        </connections>
+                                    </command>
+                                </children>
+                            </menu>
+                            <state key="normal" title="Menu"/>
+                        </button>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ThreadCell" id="Plf-P0-aej">
                                 <rect key="frame" x="0.0" y="50" width="414" height="43.5"/>
@@ -373,7 +387,10 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Threads" id="g6w-0E-ihw">
+                    <navigationItem key="navigationItem" title="Threads" leftItemsSupplementBackButton="YES" id="g6w-0E-ihw">
+                        <centerItemGroups>
+                            <barButtonItemGroup customizationDisposition="fixed" id="FZW-O9-ff3"/>
+                        </centerItemGroups>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="USN-HR-ahp">
                             <connections>
                                 <action selector="addThread:" destination="7dJ-Sc-qNw" id="nbH-0p-fgd"/>
@@ -386,6 +403,17 @@
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4xn-3H-f17" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <button opaque="NO" contentMode="scaleToFill" showsMenuAsPrimaryAction="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="8gd-ew-T7l">
+                    <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <menu key="menu" id="chC-0r-c0M">
+                        <children>
+                            <command title="Log Out" id="cTL-mQ-Ph9"/>
+                            <command title="Delete User" id="HYy-sy-qDs"/>
+                        </children>
+                    </menu>
+                    <state key="normal" image="ellipsis.circle" catalog="system"/>
+                </button>
             </objects>
             <point key="canvasLocation" x="3370" y="135"/>
         </scene>
@@ -446,7 +474,8 @@
         <segue reference="ak0-wA-i0w"/>
     </inferredMetricsTieBreakers>
     <resources>
-        <image name="paperplane.fill" catalog="system" width="128" height="119"/>
+        <image name="ellipsis.circle" catalog="system" width="32" height="32"/>
+        <image name="paperplane.fill" catalog="system" width="32" height="32"/>
         <image name="textfield" width="298" height="93"/>
         <namedColor name="BrandBlue">
             <color red="0.16500000655651093" green="0.77999997138977051" blue="0.99599999189376831" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

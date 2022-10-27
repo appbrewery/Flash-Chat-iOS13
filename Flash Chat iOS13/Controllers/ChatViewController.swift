@@ -85,17 +85,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 			print(selectedThread?.idString ?? "error")
 		}
     }
-    
-	@IBAction func logOutPressed(_ sender: UIBarButtonItem) {
-		let firebaseAuth = Auth.auth()
-		do {
-			try firebaseAuth.signOut()
-			navigationController?.popToRootViewController(animated: true)
-		} catch let signOutError as NSError {
-			AppDelegate.showError(signOutError, inViewController: self)
-		}
-		
-	}
 
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		sendPressed(textField)
