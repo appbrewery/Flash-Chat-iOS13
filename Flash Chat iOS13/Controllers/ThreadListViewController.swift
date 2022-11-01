@@ -17,11 +17,30 @@ class ThreadListViewController: UITableViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		navigationItem.hidesBackButton = true
 		loadThreads()
 	}
 
 	func loadThreads() {
-
+		database.collection(Constants.FStore.usersCollectionName)
+			.whereField(Constants.FStore.emailField, isEqualTo: (Auth.auth().currentUser?.email)!)
+			.getDocuments { [self] snapshot, error in
+				if let error = error {
+					AppDelegate.showError(error, inViewController: self)
+					return
+				} else {
+					if (snapshot?.documents.isEmpty)! {
+						let data: [String : Any] = [
+							Constants.FStore.emailField : (Auth.auth().currentUser?.email)!
+						]
+						database.collection(Constants.FStore.usersCollectionName).addDocument(data: data) { [self] error in
+							if let error = error {
+								AppDelegate.showError(error, inViewController: self)
+							}
+						}
+					}
+				}
+			}
 		database.collection(Constants.FStore.threadsCollectionName)
 			.whereField(Constants.FStore.recipientsField, arrayContains: (Auth.auth().currentUser?.email)!)
 			.order(by: Constants.FStore.dateField, descending: false)
@@ -55,9 +74,21 @@ class ThreadListViewController: UITableViewController {
 		var textField = UITextField()
 		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
 		let addAction = UIAlertAction(title: "Add", style: .default) { [self] (action) in
-
 			if let messageSender = Auth.auth().currentUser?.email {
 				let recipient = textField.text ?? messageSender
+				database.collection(Constants.FStore.usersCollectionName)
+					.whereField(Constants.FStore.emailField, isEqualTo: recipient)
+					.getDocuments { [self] users, error in
+						if let error = error {
+							AppDelegate.showError(error, inViewController: self)
+							return
+						} else if (users?.documents.isEmpty)! {
+							let userNotRegistered = UIAlertController(title: "\(recipient) is not registered!", message: "This user needs to register with Flash Chat before they can be messaged.", preferredStyle: .alert)
+							let okAction = UIAlertAction(title: "OK", style: .default)
+							userNotRegistered.addAction(okAction)
+							present(userNotRegistered, animated: true)
+							return
+						} else {
 				let data: [String : Any] = [
 					Constants.FStore.senderField : messageSender,
 					Constants.FStore.bubblesField : [Message](),
@@ -73,6 +104,8 @@ class ThreadListViewController: UITableViewController {
 						}
 					}
 				}
+			}
+					}
 			}
 		}
 		alert.addAction(addAction)
@@ -133,7 +166,6 @@ class ThreadListViewController: UITableViewController {
 		cell.accessoryType = .disclosureIndicator
 		return cell
 	}
-
 
 	// Override to support editing the table view.
 	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {

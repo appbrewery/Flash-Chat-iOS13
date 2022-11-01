@@ -21,7 +21,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 
 	var selectedThread: Thread? = nil
 
-	let messagesForSelectedThread = Constants.FStore.collectionName
+	let messagesForSelectedThread = Constants.FStore.messagesCollectionName
     
 	override func viewDidLoad() {
 		super.viewDidLoad()
