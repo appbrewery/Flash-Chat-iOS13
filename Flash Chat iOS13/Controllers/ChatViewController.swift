@@ -11,9 +11,11 @@ import Firebase
 
 class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
 
-    @IBOutlet weak var tableView: UITableView?
+	@IBOutlet weak var sendButton: UIButton?
 
-    @IBOutlet weak var messageTextfield: UITextField?
+	@IBOutlet weak var tableView: UITableView?
+
+	@IBOutlet weak var messageTextfield: UITextField?
 
 	let database = Firestore.firestore()
 
@@ -22,7 +24,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 	var selectedThread: Thread? = nil
 
 	let messagesForSelectedThread = Constants.FStore.messagesCollectionName
-    
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		title = Constants.appName
@@ -39,31 +41,41 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 		database.collection(Constants.FStore.threadsCollectionName).document((selectedThread?.idString)!).collection(Constants.FStore.bubblesField)
 			.order(by: Constants.FStore.dateField, descending: false)
 			.addSnapshotListener { [self] (querySnapshot, error) in
-			messages = []
-			guard Auth.auth().currentUser != nil else { return }
-			if let error = error {
-				AppDelegate.showError(error, inViewController: self)
-			} else {
-				if let snapshotDocuments = querySnapshot?.documents {
-					for doc in snapshotDocuments {
-						let data = doc.data()
-						if let sender = data[Constants.FStore.senderField] as? String,
-						   let body = data[Constants.FStore.bodyField] as? String {
-							let newMessage = Message(sender: sender, body: body, idString: doc.documentID)
-							messages.append(newMessage)
-							DispatchQueue.main.async { [self] in
-								let indexPath = IndexPath(row: messages.count - 1, section: 0)
-								tableView?.reloadData()
-								tableView?.scrollToRow(at: indexPath, at: .top, animated: true)
+				messages = []
+				guard Auth.auth().currentUser != nil else { return }
+				if let error = error {
+					AppDelegate.showError(error, inViewController: self)
+				} else {
+					if let snapshotDocuments = querySnapshot?.documents {
+						for doc in snapshotDocuments {
+							let data = doc.data()
+							if let sender = data[Constants.FStore.senderField] as? String,
+							   let body = data[Constants.FStore.bodyField] as? String {
+								AppDelegate.checkRecipientRegistrationStatus(sender, inDatabase: database) { [self] registered, error in
+									if let error = error {
+										AppDelegate.showError(error, inViewController: self)
+									} else
+									if registered {
+										let newMessage = Message(sender: sender, body: body, idString: doc.documentID)
+										messages.append(newMessage)
+										DispatchQueue.main.async { [self] in
+											let indexPath = IndexPath(row: messages.count - 1, section: 0)
+											tableView?.reloadData()
+											tableView?.scrollToRow(at: indexPath, at: .top, animated: true)
+										}
+									} else {
+										messageTextfield?.isEnabled = false
+										sendButton?.isEnabled = false
+									}
+								}
 							}
 						}
 					}
 				}
 			}
-		}
 	}
-    
-    @IBAction func sendPressed(_ sender: Any) {
+
+	@IBAction func sendPressed(_ sender: Any) {
 		if let messageBody = messageTextfield?.text,
 		   let messageSender = Auth.auth().currentUser?.email {
 			let currentDate = Date()
@@ -72,7 +84,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 				Constants.FStore.bodyField : messageBody,
 				Constants.FStore.dateField : currentDate.timeIntervalSince1970
 			]
-			print(selectedThread?.idString ?? "error")
 			database.collection(Constants.FStore.threadsCollectionName).document((selectedThread?.idString)!).collection(Constants.FStore.bubblesField).addDocument(data: data) { [self] error in
 				if let error = error {
 					AppDelegate.showError(error, inViewController: self)
@@ -82,9 +93,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 					}
 				}
 			}
-			print(selectedThread?.idString ?? "error")
 		}
-    }
+	}
 
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		sendPressed(textField)
@@ -133,7 +143,7 @@ extension ChatViewController {
 
 	func deleteMessage(at row: Int) {
 		let alert = UIAlertController(title: "Delete this message?", message: "The recipients will no longer see it!", preferredStyle: .alert)
-		let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [self] action in 
+		let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [self] action in
 			database.collection(Constants.FStore.threadsCollectionName).document((selectedThread?.idString)!).collection(Constants.FStore.bubblesField).getDocuments() { (querySnapshot, error) in
 				if let error = error {
 					AppDelegate.showError(error, inViewController: self)

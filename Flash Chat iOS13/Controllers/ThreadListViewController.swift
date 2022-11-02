@@ -10,17 +10,17 @@ import UIKit
 import Firebase
 
 class ThreadListViewController: UITableViewController {
-
+	
 	var threads: [Thread] = []
-
+	
 	let database = Firestore.firestore()
-
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		navigationItem.hidesBackButton = true
 		loadThreads()
 	}
-
+	
 	func loadThreads() {
 		database.collection(Constants.FStore.usersCollectionName)
 			.whereField(Constants.FStore.emailField, isEqualTo: (Auth.auth().currentUser?.email)!)
@@ -68,7 +68,7 @@ class ThreadListViewController: UITableViewController {
 				}
 			}
 	}
-
+	
 	@IBAction func addThread(_ sender: UIBarButtonItem) {
 		let alert = UIAlertController(title: "New Message", message: "Enter recipient email address", preferredStyle: .alert)
 		var textField = UITextField()
@@ -76,36 +76,33 @@ class ThreadListViewController: UITableViewController {
 		let addAction = UIAlertAction(title: "Add", style: .default) { [self] (action) in
 			if let messageSender = Auth.auth().currentUser?.email {
 				let recipient = textField.text ?? messageSender
-				database.collection(Constants.FStore.usersCollectionName)
-					.whereField(Constants.FStore.emailField, isEqualTo: recipient)
-					.getDocuments { [self] users, error in
-						if let error = error {
-							AppDelegate.showError(error, inViewController: self)
-							return
-						} else if (users?.documents.isEmpty)! {
-							let userNotRegistered = UIAlertController(title: "\(recipient) is not registered!", message: "This user needs to register with Flash Chat before they can be messaged.", preferredStyle: .alert)
-							let okAction = UIAlertAction(title: "OK", style: .default)
-							userNotRegistered.addAction(okAction)
-							present(userNotRegistered, animated: true)
-							return
-						} else {
-				let data: [String : Any] = [
-					Constants.FStore.senderField : messageSender,
-					Constants.FStore.bubblesField : [Message](),
-					Constants.FStore.recipientsField : [messageSender, recipient],
-					Constants.FStore.dateField : Date()
-				]
-				database.collection(Constants.FStore.threadsCollectionName).addDocument(data: data) { [self] error in
+				AppDelegate.checkRecipientRegistrationStatus(recipient, inDatabase: database) { [self] registered, error in
 					if let error = error {
 						AppDelegate.showError(error, inViewController: self)
-					} else {
-						DispatchQueue.main.async { [self] in
-							goToThread()
+					} else
+					if registered {
+						let data: [String : Any] = [
+							Constants.FStore.senderField : messageSender,
+							Constants.FStore.bubblesField : [Message](),
+							Constants.FStore.recipientsField : [messageSender, recipient],
+							Constants.FStore.dateField : Date()
+						]
+						database.collection(Constants.FStore.threadsCollectionName).addDocument(data: data) { [self] error in
+							if let error = error {
+								AppDelegate.showError(error, inViewController: self)
+							} else {
+								DispatchQueue.main.async { [self] in
+									goToThread()
+								}
+							}
 						}
+					} else {
+						let userNotRegistered = UIAlertController(title: "\(recipient) is not registered!", message: "This user needs to register with Flash Chat before they can be messaged.", preferredStyle: .alert)
+						let okAction = UIAlertAction(title: "OK", style: .default)
+						userNotRegistered.addAction(okAction)
+						present(userNotRegistered, animated: true)
 					}
 				}
-			}
-					}
 			}
 		}
 		alert.addAction(addAction)
@@ -115,7 +112,7 @@ class ThreadListViewController: UITableViewController {
 		}
 		present(alert, animated: true)
 	}
-
+	
 	@IBAction func logOutPressed(_ sender: Any) {
 		let firebaseAuth = Auth.auth()
 		do {
@@ -125,19 +122,37 @@ class ThreadListViewController: UITableViewController {
 			AppDelegate.showError(signOutError, inViewController: self)
 		}
 	}
-
+	
 	@IBAction func deleteUser(_ sender: Any) {
 		let alert = UIAlertController(title: "Are you sure you really want to delete this user?", message: "This can't be undone!", preferredStyle: .alert)
 		let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { action in
-		if let user = Auth.auth().currentUser {
-			user.delete { error in
-				if let error = error {
-					AppDelegate.showError(error, inViewController: self)
-				} else {
-					// Account deleted.
-					self.navigationController?.popToRootViewController(animated: true)
+			if let user = Auth.auth().currentUser {
+				user.delete { error in
+					if let error = error {
+						AppDelegate.showError(error, inViewController: self)
+					} else {
+						// Account deleted.
+						self.navigationController?.popToRootViewController(animated: true)
+						self.database.collection(Constants.FStore.usersCollectionName).getDocuments() { (userQuerySnapshot, error) in
+							if let error = error {
+								AppDelegate.showError(error, inViewController: self)
+							} else {
+								if let users = userQuerySnapshot?.documents {
+									for userRef in users {
+										if userRef == user {
+											self.database.collection(Constants.FStore.usersCollectionName).document(userRef.documentID).delete { [self]
+												error in
+												if let error = error {
+													AppDelegate.showError(error, inViewController: self)
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
 				}
-			}
 			}
 		}
 		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
@@ -145,13 +160,13 @@ class ThreadListViewController: UITableViewController {
 		alert.addAction(cancelAction)
 		present(alert, animated: true)
 	}
-
+	
 	// MARK: - Table view data source
-
+	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return threads.count
 	}
-
+	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: Constants.threadCellIdentifier, for: indexPath)
 		let row = indexPath.row
@@ -166,7 +181,7 @@ class ThreadListViewController: UITableViewController {
 		cell.accessoryType = .disclosureIndicator
 		return cell
 	}
-
+	
 	// Override to support editing the table view.
 	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
@@ -208,13 +223,13 @@ class ThreadListViewController: UITableViewController {
 			}
 		}
 	}
-
+	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		goToThread()
 	}
-
+	
 	// MARK: - Navigation
-
+	
 	// In a storyboard-based application, you will often want to do a little preparation before navigation
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		// Get the new view controller using segue.destination.
@@ -227,9 +242,9 @@ class ThreadListViewController: UITableViewController {
 			}
 		}
 	}
-
+	
 	func goToThread() {
 		performSegue(withIdentifier: Constants.threadSegue, sender: self)
 	}
-
+	
 }
