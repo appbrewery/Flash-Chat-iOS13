@@ -127,19 +127,17 @@ class ThreadListViewController: UITableViewController {
 		let alert = UIAlertController(title: "Are you sure you really want to delete this user?", message: "This can't be undone!", preferredStyle: .alert)
 		let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { action in
 			if let user = Auth.auth().currentUser {
-				self.database.collection(Constants.FStore.usersCollectionName).getDocuments() { (userQuerySnapshot, error) in
+				self.database.collection(Constants.FStore.usersCollectionName).whereField(Constants.FStore.emailField, isEqualTo: user.email!).getDocuments { (userQuerySnapshot, error) in
 					if let error = error {
 						AppDelegate.showError(error, inViewController: self)
 					} else {
-						if let users = userQuerySnapshot?.documents {
-							for userRef in users {
+						if let userRef = userQuerySnapshot?.documents.first {
 								if userRef.data()[Constants.FStore.emailField] as? String == user.email {
 									self.database.collection(Constants.FStore.usersCollectionName).document(userRef.documentID).delete { [self]
 										error in
 										if let error = error {
 											AppDelegate.showError(error, inViewController: self)
 										}
-									}
 								}
 							}
 						}
