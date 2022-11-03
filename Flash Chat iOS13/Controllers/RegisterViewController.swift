@@ -15,6 +15,8 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var passwordTextfield: UITextField!
 
+	var database = Firestore.firestore()
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		emailTextfield.delegate = self
@@ -31,6 +33,14 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
 					AppDelegate.showError(error, inViewController: self)
 				} else {
 					// Navigate to ChatViewController
+					let data: [String : Any] = [
+						Constants.FStore.emailField : email
+					]
+					database.collection(Constants.FStore.usersCollectionName).addDocument(data: data) { [self] error in
+						if let error = error {
+							AppDelegate.showError(error, inViewController: self)
+						}
+						}
 					performSegue(withIdentifier: Constants.registerSegue, sender: self)
 				}
 			}

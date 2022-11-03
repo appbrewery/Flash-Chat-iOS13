@@ -12,34 +12,50 @@ import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+	
+	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+		// Override point for customization after application launch.
 		configureKeyboard()
 		FirebaseApp.configure()
-        return true
-    }
-
+		return true
+	}
+	
 	func configureKeyboard() {
 		IQKeyboardManager.shared.enable = true
 		IQKeyboardManager.shared.enableAutoToolbar = false
 		IQKeyboardManager.shared.shouldResignOnTouchOutside = true
 	}
-
-    // MARK: UISceneSession Lifecycle
-
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        // Called when a new scene session is being created.
-        // Use this method to select a configuration to create the new scene with.
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
-    }
-
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
-    }
-
+	
+	// MARK: UISceneSession Lifecycle
+	
+	func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+		// Called when a new scene session is being created.
+		// Use this method to select a configuration to create the new scene with.
+		return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+	}
+	
+	func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
+		// Called when the user discards a scene session.
+		// If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
+		// Use this method to release any resources that were specific to the discarded scenes, as they will not return.
+	}
+	
+	static func checkRecipientRegistrationStatus(_ recipient: String, inDatabase database: Firestore, completionHandler: @escaping ((Bool, Error?) -> Void)) {
+		database.collection(Constants.FStore.usersCollectionName)
+			.whereField(Constants.FStore.emailField, isEqualTo: recipient)
+			.getDocuments { users, error in
+				if let error = error {
+					completionHandler(false, error)
+					return
+				} else if (users?.documents.isEmpty)! {
+					completionHandler(false, nil)
+					return
+				} else {
+					completionHandler(true, nil)
+				}
+			}
+	}
+	
 	static func showError(_ error: Error, customMessage message: String? = nil, inViewController viewController: UIViewController) {
 		let alert = UIAlertController(title: message ?? error.localizedDescription, message: nil, preferredStyle: .alert)
 		let dismissAction = UIAlertAction(title: "OK", style: .default)
@@ -48,7 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		haptics.notificationOccurred(.error)
 		viewController.present(alert, animated: true)
 	}
-
-
+	
+	
 }
 

@@ -38,9 +38,13 @@ struct Constants {
 
 	struct FStore {
 
-		static let collectionName = "messages"
+		static let usersCollectionName = "users"
+
+		static let messagesCollectionName = "messages"
 
 		static let threadsCollectionName = "threads"
+
+		static let emailField = "email"
 
 		static let bubblesField = "bubbles"
 
