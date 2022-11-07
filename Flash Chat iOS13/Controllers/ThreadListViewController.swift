@@ -12,6 +12,8 @@ import Firebase
 class ThreadListViewController: UITableViewController {
 	
 	var threads: [Thread] = []
+
+	var selectedThread: Thread? = nil
 	
 	let database = Firestore.firestore()
 	
@@ -77,10 +79,20 @@ class ThreadListViewController: UITableViewController {
 			if let messageSender = Auth.auth().currentUser?.email {
 				let recipient = textField.text ?? messageSender
 				AppDelegate.checkRecipientRegistrationStatus(recipient, inDatabase: database) { [self] registered, error in
+					var targetThreadIfDuplicate: Thread? = nil
 					if let error = error {
 						AppDelegate.showError(error, inViewController: self)
 					} else
-					if registered {
+					if threads.contains(where: { thread in
+						targetThreadIfDuplicate = thread
+						return thread.recipients.contains(recipient)
+					}) {
+						DispatchQueue.main.async { [self] in
+							selectedThread = targetThreadIfDuplicate
+							goToThread()
+						}
+					}
+					else if registered {
 						let data: [String : Any] = [
 							Constants.FStore.senderField : messageSender,
 							Constants.FStore.bubblesField : [Message](),
@@ -223,6 +235,7 @@ class ThreadListViewController: UITableViewController {
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		selectedThread = threads[indexPath.row]
 		goToThread()
 	}
 	
@@ -233,11 +246,7 @@ class ThreadListViewController: UITableViewController {
 		// Get the new view controller using segue.destination.
 		if let chatVC = segue.destination as? ChatViewController {
 			// Pass the selected object to the new view controller.
-			if let selectedRow = tableView.indexPathForSelectedRow?.row {
-				chatVC.selectedThread = threads[selectedRow]
-			} else {
-				chatVC.selectedThread = threads.last!
-			}
+			chatVC.selectedThread = selectedThread ?? threads.first!
 		}
 	}
 	
