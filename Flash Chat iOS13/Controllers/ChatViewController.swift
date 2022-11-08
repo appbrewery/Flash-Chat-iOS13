@@ -50,9 +50,9 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 						for doc in snapshotDocuments {
 							let data = doc.data()
 							if let sender = data[Constants.FStore.senderField] as? String,
-							   let recipient = selectedThread?.recipients.last as? String,
+							   let recipients = selectedThread?.recipients as? [String],
 							   let body = data[Constants.FStore.bodyField] as? String {
-								AppDelegate.checkRecipientRegistrationStatus(recipient, inDatabase: database) { [self] registered, error in
+								AppDelegate.checkRecipientRegistrationStatus(recipients, inDatabase: database) { [self] registered, error in
 									if let error = error {
 										AppDelegate.showError(error, inViewController: self)
 									} else {
@@ -64,7 +64,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 											tableView?.scrollToRow(at: indexPath, at: .top, animated: true)
 										}
 										if !registered {
-											let userNotRegistered = UIAlertController(title: "\(recipient) is no longer registered!", message: "This thread is read-only until they re-register.", preferredStyle: .alert)
+											let userNotRegistered = UIAlertController(title: "One or more recipients in this thread are no longer registered!", message: "This thread is read-only until they re-register.", preferredStyle: .alert)
 											let okAction = UIAlertAction(title: "OK", style: .default)
 											userNotRegistered.addAction(okAction)
 											present(userNotRegistered, animated: true)

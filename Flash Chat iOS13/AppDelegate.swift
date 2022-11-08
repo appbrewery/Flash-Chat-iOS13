@@ -40,20 +40,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		// Use this method to release any resources that were specific to the discarded scenes, as they will not return.
 	}
 	
-	static func checkRecipientRegistrationStatus(_ recipient: String, inDatabase database: Firestore, completionHandler: @escaping ((Bool, Error?) -> Void)) {
-		database.collection(Constants.FStore.usersCollectionName)
-			.whereField(Constants.FStore.emailField, isEqualTo: recipient)
-			.getDocuments { users, error in
-				if let error = error {
-					completionHandler(false, error)
-					return
-				} else if (users?.documents.isEmpty)! {
-					completionHandler(false, nil)
-					return
-				} else {
-					completionHandler(true, nil)
+	static func checkRecipientRegistrationStatus(_ recipients: [String], inDatabase database: Firestore, completionHandler: @escaping ((_ allRecipientsRegistered: Bool, _ error: Error?) -> Void)) {
+		var unregisteredRecipients: [String] = []
+		for recipient in recipients.filter({ recipient in
+			return recipient != Auth.auth().currentUser?.email
+		}) {
+			print(recipient)
+			database.collection(Constants.FStore.usersCollectionName)
+				.whereField(Constants.FStore.emailField, isEqualTo: recipient)
+				.getDocuments { users, error in
+					if let error = error {
+						completionHandler(false, error)
+						return
+					} else if (users?.documents.isEmpty)! {
+						unregisteredRecipients.append(recipient)
+					}
 				}
-			}
+		}
+		print("Unregistered recipients: \(unregisteredRecipients)")
+		if !unregisteredRecipients.isEmpty {
+			completionHandler(false, nil)
+		} else {
+			completionHandler(true, nil)
+		}
 	}
 	
 	static func showError(_ error: Error, customMessage message: String? = nil, inViewController viewController: UIViewController) {
