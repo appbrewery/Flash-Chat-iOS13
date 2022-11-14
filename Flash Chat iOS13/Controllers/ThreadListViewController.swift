@@ -76,8 +76,15 @@ class ThreadListViewController: UITableViewController {
 		var textField = UITextField()
 		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
 		let addAction = UIAlertAction(title: "Add", style: .default) { [self] (action) in
+			guard let text = textField.text else { return }
+			if text.contains(" ") {
+				let spacesNotAllowed = UIAlertController(title: "The recipients field can't contain spaces. Please try again with the format \"name@example.com,name@example.com\".", message: nil, preferredStyle: .alert)
+				let okAction = UIAlertAction(title: "OK", style: .default)
+				spacesNotAllowed.addAction(okAction)
+				present(spacesNotAllowed, animated: true)
+			}
 			if let messageSender = Auth.auth().currentUser?.email {
-				var recipients = textField.text?.components(separatedBy: ",") ?? [messageSender]
+				var recipients = text.components(separatedBy: ",") 
 				recipients.append(messageSender)
 				Task {
 					await AppDelegate.checkRecipientRegistrationStatus(recipients, inDatabase: database) { [self] registered, error in
