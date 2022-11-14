@@ -79,43 +79,45 @@ class ThreadListViewController: UITableViewController {
 			if let messageSender = Auth.auth().currentUser?.email {
 				var recipients = textField.text?.components(separatedBy: ",") ?? [messageSender]
 				recipients.append(messageSender)
-				AppDelegate.checkRecipientRegistrationStatus(recipients, inDatabase: database) { [self] registered, error in
-					var targetThreadIfDuplicate: Thread? = nil
-					if let error = error {
-						AppDelegate.showError(error, inViewController: self)
-					} else
-					if threads.contains(where: { thread in
-						targetThreadIfDuplicate = thread
-						return thread.recipients.sorted() == recipients.sorted()
-					}) {
-						DispatchQueue.main.async { [self] in
-							selectedThread = targetThreadIfDuplicate
-							goToThread()
-						}
-					}
-					else if registered {
-						let data: [String : Any] = [
-							Constants.FStore.senderField : messageSender,
-							Constants.FStore.bubblesField : [Message](),
-							Constants.FStore.recipientsField : recipients,
-							Constants.FStore.dateField : Date()
-						]
-						database.collection(Constants.FStore.threadsCollectionName).addDocument(data: data) { [self] error in
-							if let error = error {
-								AppDelegate.showError(error, inViewController: self)
-							} else {
-								loadThreads()
-								DispatchQueue.main.async { [self] in
-									selectedThread = threads.last!
-									goToThread()
-								}
+				Task {
+					await AppDelegate.checkRecipientRegistrationStatus(recipients, inDatabase: database) { [self] registered, error in
+						var targetThreadIfDuplicate: Thread? = nil
+						if let error = error {
+							AppDelegate.showError(error, inViewController: self)
+						} else
+						if threads.contains(where: { thread in
+							targetThreadIfDuplicate = thread
+							return thread.recipients.sorted() == recipients.sorted()
+						}) {
+							DispatchQueue.main.async { [self] in
+								selectedThread = targetThreadIfDuplicate
+								goToThread()
 							}
 						}
-					} else {
-						let userNotRegistered = UIAlertController(title: "One or more recipients you entered are not registered!", message: "These users need to register with Flash Chat before they can be messaged.", preferredStyle: .alert)
-						let okAction = UIAlertAction(title: "OK", style: .default)
-						userNotRegistered.addAction(okAction)
-						present(userNotRegistered, animated: true)
+						else if registered {
+							let data: [String : Any] = [
+								Constants.FStore.senderField : messageSender,
+								Constants.FStore.bubblesField : [Message](),
+								Constants.FStore.recipientsField : recipients,
+								Constants.FStore.dateField : Date()
+							]
+							database.collection(Constants.FStore.threadsCollectionName).addDocument(data: data) { [self] error in
+								if let error = error {
+									AppDelegate.showError(error, inViewController: self)
+								} else {
+									loadThreads()
+									DispatchQueue.main.async { [self] in
+										selectedThread = threads.last!
+										goToThread()
+									}
+								}
+							}
+						} else {
+							let userNotRegistered = UIAlertController(title: "One or more recipients you entered are not registered!", message: "These users need to register with Flash Chat before they can be messaged.", preferredStyle: .alert)
+							let okAction = UIAlertAction(title: "OK", style: .default)
+							userNotRegistered.addAction(okAction)
+							present(userNotRegistered, animated: true)
+						}
 					}
 				}
 			}

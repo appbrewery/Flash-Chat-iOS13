@@ -52,24 +52,26 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 							if let sender = data[Constants.FStore.senderField] as? String,
 							   let recipients = selectedThread?.recipients as? [String],
 							   let body = data[Constants.FStore.bodyField] as? String {
-								AppDelegate.checkRecipientRegistrationStatus(recipients, inDatabase: database) { [self] registered, error in
-									if let error = error {
-										AppDelegate.showError(error, inViewController: self)
-									} else {
-										let newMessage = Message(sender: sender, body: body, idString: doc.documentID)
-										messages.append(newMessage)
-										DispatchQueue.main.async { [self] in
-											let indexPath = IndexPath(row: messages.count - 1, section: 0)
-											tableView?.reloadData()
-											tableView?.scrollToRow(at: indexPath, at: .top, animated: true)
-										}
-										if !registered {
-											let userNotRegistered = UIAlertController(title: "One or more recipients in this thread are no longer registered!", message: "This thread is read-only until they re-register.", preferredStyle: .alert)
-											let okAction = UIAlertAction(title: "OK", style: .default)
-											userNotRegistered.addAction(okAction)
-											present(userNotRegistered, animated: true)
-											messageTextfield?.isEnabled = false
-											sendButton?.isEnabled = false
+								Task {
+									await AppDelegate.checkRecipientRegistrationStatus(recipients, inDatabase: database) { [self] registered, error in
+										if let error = error {
+											AppDelegate.showError(error, inViewController: self)
+										} else {
+											let newMessage = Message(sender: sender, body: body, idString: doc.documentID)
+											messages.append(newMessage)
+											DispatchQueue.main.async { [self] in
+												let indexPath = IndexPath(row: messages.count - 1, section: 0)
+												tableView?.reloadData()
+												tableView?.scrollToRow(at: indexPath, at: .top, animated: true)
+											}
+											if !registered {
+												let userNotRegistered = UIAlertController(title: "One or more recipients in this thread are no longer registered!", message: "This thread is read-only until they re-register.", preferredStyle: .alert)
+												let okAction = UIAlertAction(title: "OK", style: .default)
+												userNotRegistered.addAction(okAction)
+												present(userNotRegistered, animated: true)
+												messageTextfield?.isEnabled = false
+												sendButton?.isEnabled = false
+											}
 										}
 									}
 								}
