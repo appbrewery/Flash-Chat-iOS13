@@ -120,17 +120,19 @@ extension ChatViewController {
 		let message = messages[indexPath.row]
 		let currentUser = Auth.auth().currentUser?.email
 		let cell = tableView.dequeueReusableCell(withIdentifier: Constants.bubbleCellIdentifier, for: indexPath) as? MessageCell
-		cell?.label?.text = message.body
+		cell?.messageBodyLabel?.text = message.body
 		if message.sender == currentUser {
+			cell?.senderLabel?.text = nil
 			cell?.leftImageView?.isHidden = true
 			cell?.rightImageView?.isHidden = false
 			cell?.messageBubble?.backgroundColor = UIColor(named: Constants.BrandColors.lightPurple)
-			cell?.label?.textColor = UIColor(named: Constants.BrandColors.purple)
+			cell?.messageBodyLabel?.textColor = UIColor(named: Constants.BrandColors.purple)
 		} else {
+			cell?.senderLabel?.text = message.sender
 			cell?.leftImageView?.isHidden = false
 			cell?.rightImageView?.isHidden = true
 			cell?.messageBubble?.backgroundColor = UIColor(named: Constants.BrandColors.purple)
-			cell?.label?.textColor = UIColor(named: Constants.BrandColors.lightPurple)
+			cell?.messageBodyLabel?.textColor = UIColor(named: Constants.BrandColors.lightPurple)
 
 		}
 		return cell!
