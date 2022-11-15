@@ -72,47 +72,53 @@ class ThreadListViewController: UITableViewController {
 	}
 	
 	@IBAction func addThread(_ sender: UIBarButtonItem) {
-		let alert = UIAlertController(title: "New Message", message: "Enter recipient email address", preferredStyle: .alert)
+		let alert = UIAlertController(title: "New Message", message: "Enter recipient email address. To message multiple recipients, enter their email addresses separated by a comma (e.g. email@example.com,email@example.com).", preferredStyle: .alert)
 		var textField = UITextField()
 		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
 		let addAction = UIAlertAction(title: "Add", style: .default) { [self] (action) in
+			guard let text = textField.text?.replacingOccurrences(of: " ", with: "") else { return }
 			if let messageSender = Auth.auth().currentUser?.email {
-				let recipient = textField.text ?? messageSender
-				AppDelegate.checkRecipientRegistrationStatus(recipient, inDatabase: database) { [self] registered, error in
-					var targetThreadIfDuplicate: Thread? = nil
-					if let error = error {
-						AppDelegate.showError(error, inViewController: self)
-					} else
-					if threads.contains(where: { thread in
-						targetThreadIfDuplicate = thread
-						return thread.recipients.contains(recipient)
-					}) {
-						DispatchQueue.main.async { [self] in
-							selectedThread = targetThreadIfDuplicate
-							goToThread()
-						}
-					}
-					else if registered {
-						let data: [String : Any] = [
-							Constants.FStore.senderField : messageSender,
-							Constants.FStore.bubblesField : [Message](),
-							Constants.FStore.recipientsField : [messageSender, recipient],
-							Constants.FStore.dateField : Date()
-						]
-						database.collection(Constants.FStore.threadsCollectionName).addDocument(data: data) { [self] error in
-							if let error = error {
-								AppDelegate.showError(error, inViewController: self)
-							} else {
-								DispatchQueue.main.async { [self] in
-									goToThread()
-								}
+				var recipients = text.components(separatedBy: ",")
+				recipients.append(messageSender)
+				Task {
+					await AppDelegate.checkRecipientRegistrationStatus(recipients, inDatabase: database) { [self] registered, error in
+						var targetThreadIfDuplicate: Thread? = nil
+						if let error = error {
+							AppDelegate.showError(error, inViewController: self)
+						} else
+						if threads.contains(where: { thread in
+							targetThreadIfDuplicate = thread
+							return thread.recipients.sorted() == recipients.sorted()
+						}) {
+							DispatchQueue.main.async { [self] in
+								selectedThread = targetThreadIfDuplicate
+								goToThread()
 							}
 						}
-					} else {
-						let userNotRegistered = UIAlertController(title: "\(recipient) is not registered!", message: "This user needs to register with Flash Chat before they can be messaged.", preferredStyle: .alert)
-						let okAction = UIAlertAction(title: "OK", style: .default)
-						userNotRegistered.addAction(okAction)
-						present(userNotRegistered, animated: true)
+						else if registered {
+							let data: [String : Any] = [
+								Constants.FStore.senderField : messageSender,
+								Constants.FStore.bubblesField : [Message](),
+								Constants.FStore.recipientsField : recipients,
+								Constants.FStore.dateField : Date()
+							]
+							database.collection(Constants.FStore.threadsCollectionName).addDocument(data: data) { [self] error in
+								if let error = error {
+									AppDelegate.showError(error, inViewController: self)
+								} else {
+									loadThreads()
+									DispatchQueue.main.async { [self] in
+										selectedThread = threads.last!
+										goToThread()
+									}
+								}
+							}
+						} else {
+							let userNotRegistered = UIAlertController(title: "One or more recipients you entered are not registered!", message: "These users need to register with Flash Chat before they can be messaged.", preferredStyle: .alert)
+							let okAction = UIAlertAction(title: "OK", style: .default)
+							userNotRegistered.addAction(okAction)
+							present(userNotRegistered, animated: true)
+						}
 					}
 				}
 			}
@@ -185,7 +191,7 @@ class ThreadListViewController: UITableViewController {
 		recipientsExcludingSender.removeAll { recipient in
 			return recipient == Auth.auth().currentUser?.email
 		}
-		let recipients = recipientsExcludingSender.joined()
+		let recipients = recipientsExcludingSender.joined(separator: ", ")
 		contentConfiguration.text = recipients
 		cell.contentConfiguration = contentConfiguration
 		cell.accessoryType = .disclosureIndicator

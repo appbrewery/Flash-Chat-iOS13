@@ -40,20 +40,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		// Use this method to release any resources that were specific to the discarded scenes, as they will not return.
 	}
 	
-	static func checkRecipientRegistrationStatus(_ recipient: String, inDatabase database: Firestore, completionHandler: @escaping ((Bool, Error?) -> Void)) {
-		database.collection(Constants.FStore.usersCollectionName)
-			.whereField(Constants.FStore.emailField, isEqualTo: recipient)
-			.getDocuments { users, error in
-				if let error = error {
-					completionHandler(false, error)
-					return
-				} else if (users?.documents.isEmpty)! {
-					completionHandler(false, nil)
-					return
-				} else {
-					completionHandler(true, nil)
+	static func checkRecipientRegistrationStatus(_ recipients: [String], inDatabase database: Firestore, completionHandler: @escaping ((_ allRecipientsRegistered: Bool, _ error: Error?) -> Void)) async {
+		let unregisteredRecipients = await fetchUsers(inDatabase: database, recipients: recipients, completionHandler: completionHandler)
+		if unregisteredRecipients.isEmpty {
+			completionHandler(true, nil)
+		} else {
+			completionHandler(false, nil)
+		}
+	}
+
+	static func fetchUsers(inDatabase database: Firestore, recipients: [String], completionHandler: @escaping ((_ allRecipientsRegistered: Bool, _ error: Error?) -> Void)) async -> [String] {
+		var unregisteredRecipients: [String] = []
+		for recipient in recipients.filter({ recipient in
+			return recipient != Auth.auth().currentUser?.email
+		}) {
+			print(recipient)
+			// Asynchronously fetch this user from Firebase, and append to unregisteredRecipients if they don't exist.
+			do {
+				let userQuerySnapshot = try await database.collection(Constants.FStore.usersCollectionName)
+					.whereField(Constants.FStore.emailField, isEqualTo: recipient)
+					.getDocuments()
+				if userQuerySnapshot.documents.isEmpty {
+					unregisteredRecipients.append(recipient)
 				}
+			} catch {
+				completionHandler(false, error)
+				return unregisteredRecipients
 			}
+		}
+		return unregisteredRecipients
 	}
 	
 	static func showError(_ error: Error, customMessage message: String? = nil, inViewController viewController: UIViewController) {
