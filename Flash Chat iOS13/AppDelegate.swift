@@ -54,7 +54,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		for recipient in recipients.filter({ recipient in
 			return recipient != Auth.auth().currentUser?.email
 		}) {
-			print(recipient)
 			// Asynchronously fetch this user from Firebase, and append to unregisteredRecipients if they don't exist.
 			do {
 				let userQuerySnapshot = try await database.collection(Constants.FStore.usersCollectionName)

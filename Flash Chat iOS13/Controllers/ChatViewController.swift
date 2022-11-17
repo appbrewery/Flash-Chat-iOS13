@@ -52,6 +52,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 							if let sender = data[Constants.FStore.senderField] as? String,
 							   let recipients = selectedThread?.recipients as? [String],
 							   let body = data[Constants.FStore.bodyField] as? String {
+								print("Date of message: \(date)")
 								Task {
 									await AppDelegate.checkRecipientRegistrationStatus(recipients, inDatabase: database) { [self] registered, error in
 										if let error = error {
@@ -133,18 +134,21 @@ extension ChatViewController {
 			cell?.rightImageView?.isHidden = true
 			cell?.messageBubble?.backgroundColor = UIColor(named: Constants.BrandColors.purple)
 			cell?.messageBodyLabel?.textColor = UIColor(named: Constants.BrandColors.lightPurple)
-
 		}
 		return cell!
 	}
 
-	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		print(indexPath.row)
+	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+		if messages[indexPath.row].sender == Auth.auth().currentUser?.email {
+			return .delete
+		} else {
+			return .none
+		}
 	}
 
 	// Override to support editing the table view.
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-		if editingStyle == .delete {
+		if editingStyle == .delete && messages[indexPath.row].sender == Auth.auth().currentUser?.email {
 			// Delete the row from the data source
 			deleteMessage(at: indexPath.row)
 		}
@@ -153,13 +157,16 @@ extension ChatViewController {
 	func deleteMessage(at row: Int) {
 		let alert = UIAlertController(title: "Delete this message?", message: "The recipients will no longer see it!", preferredStyle: .alert)
 		let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [self] action in
-			database.collection(Constants.FStore.threadsCollectionName).document((selectedThread?.idString)!).collection(Constants.FStore.bubblesField).getDocuments() { (querySnapshot, error) in
+			database.collection(Constants.FStore.threadsCollectionName).document((selectedThread?.idString)!).collection(Constants.FStore.bubblesField)
+				.order(by: Constants.FStore.dateField, descending: false).getDocuments() { (querySnapshot, error) in
 				if let error = error {
 					AppDelegate.showError(error, inViewController: self)
 				} else {
 					if let bubbles = querySnapshot?.documents {
 						for bubble in bubbles {
-							if bubble == bubbles[row] {
+							let bubbleBeingChecked = bubble.documentID
+							let bubbleAtSwipedRow = bubbles[row].documentID
+							if bubbleBeingChecked == bubbleAtSwipedRow {
 								self.database.collection(Constants.FStore.threadsCollectionName).document((self.selectedThread?.idString)!).collection(Constants.FStore.bubblesField).document(bubble.documentID).delete { [self]
 									error in
 									if let error = error {
