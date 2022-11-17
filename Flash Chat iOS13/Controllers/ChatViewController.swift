@@ -52,7 +52,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 							if let sender = data[Constants.FStore.senderField] as? String,
 							   let recipients = selectedThread?.recipients as? [String],
 							   let body = data[Constants.FStore.bodyField] as? String {
-								print("Date of message: \(date)")
 								Task {
 									await AppDelegate.checkRecipientRegistrationStatus(recipients, inDatabase: database) { [self] registered, error in
 										if let error = error {

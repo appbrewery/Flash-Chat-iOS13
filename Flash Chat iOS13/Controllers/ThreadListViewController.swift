@@ -72,13 +72,13 @@ class ThreadListViewController: UITableViewController {
 	}
 	
 	@IBAction func addThread(_ sender: UIBarButtonItem) {
-		let alert = UIAlertController(title: "New Message", message: "Enter recipient email address. To message multiple recipients, enter their email addresses separated by a comma (e.g. email@example.com,email@example.com).", preferredStyle: .alert)
+		let alert = UIAlertController(title: "New Message", message: "Enter recipient email address. To message multiple recipients, enter their email addresses separated by a space (e.g. email@example.com email@example.com).", preferredStyle: .alert)
 		var textField = UITextField()
 		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
 		let addAction = UIAlertAction(title: "Add", style: .default) { [self] (action) in
-			guard let text = textField.text?.replacingOccurrences(of: " ", with: "") else { return }
+			guard let text = textField.text else { return }
 			if let messageSender = Auth.auth().currentUser?.email {
-				var recipients = text.components(separatedBy: ",")
+				var recipients = text.components(separatedBy: " ")
 				recipients.append(messageSender)
 				Task {
 					await AppDelegate.checkRecipientRegistrationStatus(recipients, inDatabase: database) { [self] registered, error in
@@ -128,6 +128,7 @@ class ThreadListViewController: UITableViewController {
 		alert.addTextField { alertTextField in
 			textField = alertTextField
 		}
+		textField.keyboardType = .emailAddress
 		present(alert, animated: true)
 	}
 	
@@ -202,14 +203,17 @@ class ThreadListViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 			// Delete the row from the data source
-			database.collection(Constants.FStore.threadsCollectionName).getDocuments() { (threadQuerySnapshot, error) in
+			database.collection(Constants.FStore.threadsCollectionName)
+				.order(by: Constants.FStore.dateField, descending: false)
+				.getDocuments() { (threadQuerySnapshot, error) in
 				if let error = error {
 					AppDelegate.showError(error, inViewController: self)
 				} else {
 					if let threads = threadQuerySnapshot?.documents {
 						for thread in threads {
 							if thread == threads[indexPath.row] {
-								self.database.collection(Constants.FStore.threadsCollectionName).document(thread.documentID).collection(Constants.FStore.bubblesField).getDocuments { bubbleQuerySnapshot, error in
+								self.database.collection(Constants.FStore.threadsCollectionName).document(thread.documentID).collection(Constants.FStore.bubblesField)
+									.getDocuments { bubbleQuerySnapshot, error in
 									if let error = error {
 										AppDelegate.showError(error, inViewController: self)
 									}
