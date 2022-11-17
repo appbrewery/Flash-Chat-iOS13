@@ -12,7 +12,7 @@ import Firebase
 class ThreadListViewController: UITableViewController {
 	
 	var threads: [Thread] = []
-
+	
 	var selectedThread: Thread? = nil
 	
 	let database = Firestore.firestore()
@@ -151,12 +151,12 @@ class ThreadListViewController: UITableViewController {
 						AppDelegate.showError(error, inViewController: self)
 					} else {
 						if let userRef = userQuerySnapshot?.documents.first {
-								if userRef.data()[Constants.FStore.emailField] as? String == user.email {
-									self.database.collection(Constants.FStore.usersCollectionName).document(userRef.documentID).delete { [self]
-										error in
-										if let error = error {
-											AppDelegate.showError(error, inViewController: self)
-										}
+							if userRef.data()[Constants.FStore.emailField] as? String == user.email {
+								self.database.collection(Constants.FStore.usersCollectionName).document(userRef.documentID).delete { [self]
+									error in
+									if let error = error {
+										AppDelegate.showError(error, inViewController: self)
+									}
 								}
 							}
 						}
@@ -203,50 +203,61 @@ class ThreadListViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 			// Delete the row from the data source
-			database.collection(Constants.FStore.threadsCollectionName)
-				.order(by: Constants.FStore.dateField, descending: false)
-				.getDocuments() { (threadQuerySnapshot, error) in
-				if let error = error {
-					AppDelegate.showError(error, inViewController: self)
-				} else {
-					if let threads = threadQuerySnapshot?.documents {
-						for thread in threads {
-							if thread == threads[indexPath.row] {
-								self.database.collection(Constants.FStore.threadsCollectionName).document(thread.documentID).collection(Constants.FStore.bubblesField)
-									.getDocuments { bubbleQuerySnapshot, error in
-									if let error = error {
-										AppDelegate.showError(error, inViewController: self)
-									}
-									if let bubbles = bubbleQuerySnapshot?.documents {
-										for bubble in bubbles {
-											self.database.collection(Constants.FStore.threadsCollectionName).document(thread.documentID).collection(Constants.FStore.bubblesField).document(bubble.documentID).delete { [self]
-												error in
-												if let error = error {
-													AppDelegate.showError(error, inViewController: self)
-												}
-											}
-										}
-									}
-								}
-								self.database.collection(Constants.FStore.threadsCollectionName).document(thread.documentID).delete { [self]
-									error in
-									if let error = error {
-										AppDelegate.showError(error, inViewController: self)
-									} else {
-										tableView.reloadData()
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+			deleteThread(at: indexPath.row)
 		}
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		selectedThread = threads[indexPath.row]
 		goToThread()
+	}
+	
+	func deleteThread(at row: Int) {
+		let alert = UIAlertController(title: "Delete this thread?", message: "This will delete all messages from the thread!", preferredStyle: .alert)
+		let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [self] action in
+			database.collection(Constants.FStore.threadsCollectionName)
+				.order(by: Constants.FStore.dateField, descending: false)
+				.getDocuments() { (threadQuerySnapshot, error) in
+					if let error = error {
+						AppDelegate.showError(error, inViewController: self)
+					} else {
+						if let threads = threadQuerySnapshot?.documents {
+							for thread in threads {
+								if thread == threads[row] {
+									self.database.collection(Constants.FStore.threadsCollectionName).document(thread.documentID).collection(Constants.FStore.bubblesField)
+										.getDocuments { bubbleQuerySnapshot, error in
+											if let error = error {
+												AppDelegate.showError(error, inViewController: self)
+											}
+											if let bubbles = bubbleQuerySnapshot?.documents {
+												for bubble in bubbles {
+													self.database.collection(Constants.FStore.threadsCollectionName).document(thread.documentID).collection(Constants.FStore.bubblesField).document(bubble.documentID).delete { [self]
+														error in
+														if let error = error {
+															AppDelegate.showError(error, inViewController: self)
+														}
+													}
+												}
+											}
+										}
+									self.database.collection(Constants.FStore.threadsCollectionName).document(thread.documentID).delete { [self]
+										error in
+										if let error = error {
+											AppDelegate.showError(error, inViewController: self)
+										} else {
+											tableView.reloadData()
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+		}
+		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+		alert.addAction(deleteAction)
+		alert.addAction(cancelAction)
+		present(alert, animated: true)
 	}
 	
 	// MARK: - Navigation
