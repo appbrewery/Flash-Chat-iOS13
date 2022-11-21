@@ -100,7 +100,7 @@
                                         <rect key="frame" x="48" y="50" width="318" height="45"/>
                                         <color key="textColor" name="BrandBlue"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                        <textInputTraits key="textInputTraits" returnKeyType="next"/>
+                                        <textInputTraits key="textInputTraits" keyboardType="emailAddress" returnKeyType="next" textContentType="email"/>
                                     </textField>
                                 </subviews>
                                 <constraints>
@@ -135,7 +135,7 @@
                                         <rect key="frame" x="49" y="50" width="317" height="45"/>
                                         <color key="textColor" name="BrandBlue"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                        <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                                        <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
                                     </textField>
                                 </subviews>
                                 <constraints>
@@ -195,7 +195,7 @@
                                         <rect key="frame" x="49" y="51" width="317" height="45"/>
                                         <color key="textColor" name="BrandBlue"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                        <textInputTraits key="textInputTraits" returnKeyType="next"/>
+                                        <textInputTraits key="textInputTraits" keyboardType="emailAddress" returnKeyType="next" textContentType="email"/>
                                     </textField>
                                 </subviews>
                                 <constraints>
@@ -220,7 +220,7 @@
                                         <rect key="frame" x="49" y="48" width="317" height="45"/>
                                         <color key="textColor" name="BrandBlue"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                        <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                                        <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
                                     </textField>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xd2-nu-tMA">
                                         <rect key="frame" x="0.0" y="124" width="414" height="53"/>
@@ -352,27 +352,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <button key="tableFooterView" opaque="NO" contentMode="scaleToFill" showsMenuAsPrimaryAction="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="zdv-p5-yTw">
-                            <rect key="frame" x="0.0" y="121.5" width="414" height="44"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <menu key="menu" id="hLD-ar-lmU">
-                                <children>
-                                    <command title="Log Out" id="ZQc-uz-Yzm">
-                                        <connections>
-                                            <action selector="logOutPressed:" destination="4xn-3H-f17" id="uVM-Tg-pwU"/>
-                                        </connections>
-                                    </command>
-                                    <command title="Delete User" id="5Ef-6e-6mN">
-                                        <connections>
-                                            <action selector="deleteUser:" destination="4xn-3H-f17" id="mLA-aB-AET"/>
-                                        </connections>
-                                    </command>
-                                </children>
-                            </menu>
-                            <state key="normal" title="Menu">
-                                <color key="titleColor" name="BrandBlue"/>
-                            </state>
-                        </button>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ThreadCell" id="Plf-P0-aej">
                                 <rect key="frame" x="0.0" y="50" width="414" height="43.5"/>
@@ -401,21 +380,25 @@
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="optionsMenu" destination="hLD-ar-lmU" id="qR5-PA-lUZ"/>
                         <segue destination="lwd-AH-u8E" kind="show" identifier="ShowThread" id="Wnj-Of-rHw"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4xn-3H-f17" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <button opaque="NO" contentMode="scaleToFill" showsMenuAsPrimaryAction="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="8gd-ew-T7l">
-                    <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <menu key="menu" id="chC-0r-c0M">
-                        <children>
-                            <command title="Log Out" id="cTL-mQ-Ph9"/>
-                            <command title="Delete User" id="HYy-sy-qDs"/>
-                        </children>
-                    </menu>
-                    <state key="normal" image="ellipsis.circle" catalog="system"/>
-                </button>
+                <menu id="hLD-ar-lmU">
+                    <children>
+                        <command title="Log Out" id="ZQc-uz-Yzm">
+                            <connections>
+                                <action selector="logOutPressed:" destination="4xn-3H-f17" id="uVM-Tg-pwU"/>
+                            </connections>
+                        </command>
+                        <command title="Delete User" id="5Ef-6e-6mN">
+                            <connections>
+                                <action selector="deleteUser:" destination="4xn-3H-f17" id="mLA-aB-AET"/>
+                            </connections>
+                        </command>
+                    </children>
+                </menu>
             </objects>
             <point key="canvasLocation" x="3370" y="135"/>
         </scene>
@@ -473,10 +456,9 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="ak0-wA-i0w"/>
+        <segue reference="H4z-4Y-ugK"/>
     </inferredMetricsTieBreakers>
     <resources>
-        <image name="ellipsis.circle" catalog="system" width="128" height="123"/>
         <image name="paperplane.fill" catalog="system" width="128" height="119"/>
         <image name="textfield" width="298" height="93"/>
         <namedColor name="BrandBlue">

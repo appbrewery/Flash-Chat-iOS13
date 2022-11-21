@@ -10,7 +10,9 @@ import UIKit
 import Firebase
 
 class ThreadListViewController: UITableViewController {
-	
+
+	@IBOutlet var optionsMenu: UIMenu?
+
 	var threads: [Thread] = []
 	
 	var selectedThread: Thread? = nil
@@ -19,8 +21,13 @@ class ThreadListViewController: UITableViewController {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		navigationItem.hidesBackButton = true
+		configureNavigationBar()
 		loadThreads()
+	}
+
+	func configureNavigationBar() {
+		navigationItem.hidesBackButton = true
+		navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "person.circle"), menu: optionsMenu)
 	}
 	
 	func loadThreads() {
@@ -188,12 +195,16 @@ class ThreadListViewController: UITableViewController {
 		let cell = tableView.dequeueReusableCell(withIdentifier: Constants.threadCellIdentifier, for: indexPath)
 		let row = indexPath.row
 		var contentConfiguration = UIListContentConfiguration.cell()
-		var recipientsExcludingSender = threads[row].recipients
-		recipientsExcludingSender.removeAll { recipient in
-			return recipient == Auth.auth().currentUser?.email
+		var recipients = threads[row].recipients
+		if recipients.count == 2 && recipients.first == Auth.auth().currentUser?.email {
+			contentConfiguration.text = "Me"
+		} else {
+			recipients.removeAll { recipient in
+				return recipient == Auth.auth().currentUser?.email
+			}
+			let separatedRecipients = recipients.joined(separator: ", ")
+			contentConfiguration.text = separatedRecipients
 		}
-		let recipients = recipientsExcludingSender.joined(separator: ", ")
-		contentConfiguration.text = recipients
 		cell.contentConfiguration = contentConfiguration
 		cell.accessoryType = .disclosureIndicator
 		return cell
