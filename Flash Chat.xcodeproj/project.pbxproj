@@ -104,10 +104,10 @@
 		0B628192235DF02000E35CAF /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				8D01E9C028F8A651002AE363 /* ThreadListViewController.swift */,
 				0B62818A235DF00000E35CAF /* WelcomeViewController.swift */,
 				0B62818C235DF00B00E35CAF /* RegisterViewController.swift */,
 				0B62818E235DF01000E35CAF /* LoginViewController.swift */,
+				8D01E9C028F8A651002AE363 /* ThreadListViewController.swift */,
 				0B628190235DF01B00E35CAF /* ChatViewController.swift */,
 			);
 			path = Controllers;
