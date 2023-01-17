@@ -402,35 +402,6 @@
             </objects>
             <point key="canvasLocation" x="3370" y="135"/>
         </scene>
-        <!--Root View Controller-->
-        <scene sceneID="c7F-XP-Tae">
-            <objects>
-                <tableViewController clearsSelectionOnViewWillAppear="NO" id="nNg-Qv-3xB" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="83U-ky-xRv">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Ddb-kR-dyV">
-                                <rect key="frame" x="0.0" y="50" width="414" height="43.5"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Ddb-kR-dyV" id="DSn-Mx-Gpk">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="nNg-Qv-3xB" id="8mi-xx-DjB"/>
-                            <outlet property="delegate" destination="nNg-Qv-3xB" id="uni-Kd-DwD"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="dHP-5r-tWE"/>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Lia-ij-NT3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="5594" y="-427"/>
-        </scene>
         <!--Navigation Controller-->
         <scene sceneID="YML-Ul-U85">
             <objects>
