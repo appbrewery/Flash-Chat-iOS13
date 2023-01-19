@@ -27,7 +27,9 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		title = Constants.appName
+		if let recipients = selectedThread?.recipients as? [String] {
+			title = "\(recipients.count) recipients"
+		}
 		tableView?.delegate = self
 		tableView?.dataSource = self
 		messageTextfield?.delegate = self
