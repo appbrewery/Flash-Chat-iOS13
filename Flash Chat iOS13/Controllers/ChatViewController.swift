@@ -53,13 +53,15 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 							let data = doc.data()
 							if let sender = data[Constants.FStore.senderField] as? String,
 							   let recipients = selectedThread?.recipients as? [String],
+							   let dateAsTimeInterval = data[Constants.FStore.dateField] as? TimeInterval,
 							   let body = data[Constants.FStore.bodyField] as? String {
+								let date = String(dateAsTimeInterval)
 								Task {
 									await AppDelegate.checkRecipientRegistrationStatus(recipients, inDatabase: database) { [self] registered, error in
 										if let error = error {
 											AppDelegate.showError(error, inViewController: self)
 										} else {
-											let newMessage = Message(sender: sender, body: body, idString: doc.documentID)
+											let newMessage = Message(sender: sender, date: date, body: body, idString: doc.documentID)
 											messages.append(newMessage)
 											DispatchQueue.main.async { [self] in
 												let indexPath = IndexPath(row: messages.count - 1, section: 0)
@@ -98,6 +100,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 					AppDelegate.showError(error, inViewController: self)
 				} else {
 					DispatchQueue.main.async { [self] in
+
 						messageTextfield?.text?.removeAll()
 					}
 				}
@@ -122,6 +125,13 @@ extension ChatViewController {
 		let message = messages[indexPath.row]
 		let currentUser = Auth.auth().currentUser?.email
 		let cell = tableView.dequeueReusableCell(withIdentifier: Constants.bubbleCellIdentifier, for: indexPath) as? MessageCell
+		let dateFormatter = DateFormatter()
+		dateFormatter.dateStyle = .medium
+		dateFormatter.timeStyle = .medium
+		let dateTimeIntervalString = message.date
+		let date = Date(timeIntervalSince1970: TimeInterval(dateTimeIntervalString)!)
+		let dateString = dateFormatter.string(from: date)
+		cell?.dateTimeLabel?.text = dateString
 		cell?.messageBodyLabel?.text = message.body
 		if message.sender == currentUser {
 			cell?.senderLabel?.text = nil
