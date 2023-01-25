@@ -100,7 +100,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 					AppDelegate.showError(error, inViewController: self)
 				} else {
 					DispatchQueue.main.async { [self] in
-
 						messageTextfield?.text?.removeAll()
 					}
 				}
@@ -126,8 +125,8 @@ extension ChatViewController {
 		let currentUser = Auth.auth().currentUser?.email
 		let cell = tableView.dequeueReusableCell(withIdentifier: Constants.bubbleCellIdentifier, for: indexPath) as? MessageCell
 		let dateFormatter = DateFormatter()
-		dateFormatter.dateStyle = .medium
-		dateFormatter.timeStyle = .medium
+		dateFormatter.dateStyle = .short
+		dateFormatter.timeStyle = .short
 		let dateTimeIntervalString = message.date
 		let date = Date(timeIntervalSince1970: TimeInterval(dateTimeIntervalString)!)
 		let dateString = dateFormatter.string(from: date)
