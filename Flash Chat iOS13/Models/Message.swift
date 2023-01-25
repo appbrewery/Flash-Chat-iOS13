@@ -12,7 +12,7 @@ struct Message {
 
 	let sender: String
 
-	let date: String
+	let date: Date
 
 	let body: String
 

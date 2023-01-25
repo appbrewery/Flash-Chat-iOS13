@@ -53,9 +53,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 							let data = doc.data()
 							if let sender = data[Constants.FStore.senderField] as? String,
 							   let recipients = selectedThread?.recipients as? [String],
-							   let dateAsTimeInterval = data[Constants.FStore.dateField] as? TimeInterval,
+							   let date = (data[Constants.FStore.dateField] as? Timestamp)?.dateValue() as? Date,
 							   let body = data[Constants.FStore.bodyField] as? String {
-								let date = String(dateAsTimeInterval)
 								Task {
 									await AppDelegate.checkRecipientRegistrationStatus(recipients, inDatabase: database) { [self] registered, error in
 										if let error = error {
@@ -93,7 +92,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 			let data: [String : Any] = [
 				Constants.FStore.senderField : messageSender,
 				Constants.FStore.bodyField : messageBody,
-				Constants.FStore.dateField : currentDate.timeIntervalSince1970
+				Constants.FStore.dateField : currentDate
 			]
 			database.collection(Constants.FStore.threadsCollectionName).document((selectedThread?.idString)!).collection(Constants.FStore.bubblesField).addDocument(data: data) { [self] error in
 				if let error = error {
@@ -127,8 +126,7 @@ extension ChatViewController {
 		let dateFormatter = DateFormatter()
 		dateFormatter.dateStyle = .short
 		dateFormatter.timeStyle = .short
-		let dateTimeIntervalString = message.date
-		let date = Date(timeIntervalSince1970: TimeInterval(dateTimeIntervalString)!)
+		let date = message.date
 		let dateString = dateFormatter.string(from: date)
 		cell?.dateTimeLabel?.text = dateString
 		cell?.messageBodyLabel?.text = message.body
