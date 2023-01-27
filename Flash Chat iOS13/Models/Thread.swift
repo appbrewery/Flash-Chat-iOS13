@@ -12,6 +12,8 @@ struct Thread {
 
 	let idString: String
 
+	let date: Date
+
 	let recipients: [String]
 
 	let messageBubbles: [Message]

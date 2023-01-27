@@ -98,6 +98,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 				if let error = error {
 					AppDelegate.showError(error, inViewController: self)
 				} else {
+					database.collection(Constants.FStore.threadsCollectionName).document((selectedThread?.idString)!).updateData([Constants.FStore.dateField : Date()])
 					DispatchQueue.main.async { [self] in
 						messageTextfield?.text?.removeAll()
 					}
