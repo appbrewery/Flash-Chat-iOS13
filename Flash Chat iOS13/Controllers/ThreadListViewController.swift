@@ -16,6 +16,8 @@ class ThreadListViewController: UITableViewController {
 	var threads: [Thread] = []
 	
 	var selectedThread: Thread? = nil
+
+	var newThreadDate: Date? = nil
 	
 	let database = Firestore.firestore()
 	
@@ -52,7 +54,7 @@ class ThreadListViewController: UITableViewController {
 			}
 		database.collection(Constants.FStore.threadsCollectionName)
 			.whereField(Constants.FStore.recipientsField, arrayContains: (Auth.auth().currentUser?.email)!)
-			.order(by: Constants.FStore.dateField, descending: false)
+			.order(by: Constants.FStore.dateField, descending: true)
 			.addSnapshotListener { [self] (querySnapshot, error) in
 				threads = []
 				guard Auth.auth().currentUser != nil else { return }
@@ -63,8 +65,9 @@ class ThreadListViewController: UITableViewController {
 						for doc in snapshotDocuments {
 							let data = doc.data()
 							if let recipients = data[Constants.FStore.recipientsField] as? [String],
+							   let date = (data[Constants.FStore.dateField] as? Timestamp)?.dateValue() as? Date,
 							   let bubbles = data[Constants.FStore.bubblesField] as? [Message] {
-								let newThread = Thread(idString: doc.documentID, recipients: recipients, messageBubbles: bubbles)
+								let newThread = Thread(idString: doc.documentID, date: date, recipients: recipients, messageBubbles: bubbles)
 								threads.append(newThread)
 								DispatchQueue.main.async { [self] in
 									let indexPath = IndexPath(row: threads.count - 1, section: 0)
@@ -103,19 +106,20 @@ class ThreadListViewController: UITableViewController {
 							}
 						}
 						else if registered {
+							newThreadDate = Date()
 							let data: [String : Any] = [
+								Constants.FStore.dateField : newThreadDate!,
 								Constants.FStore.senderField : messageSender,
 								Constants.FStore.bubblesField : [Message](),
-								Constants.FStore.recipientsField : recipients,
-								Constants.FStore.dateField : Date()
+								Constants.FStore.recipientsField : recipients
 							]
 							database.collection(Constants.FStore.threadsCollectionName).addDocument(data: data) { [self] error in
 								if let error = error {
 									AppDelegate.showError(error, inViewController: self)
 								} else {
 									loadThreads()
+									selectedThread = threads.first!
 									DispatchQueue.main.async { [self] in
-										selectedThread = threads.last!
 										goToThread()
 									}
 								}
@@ -227,7 +231,7 @@ class ThreadListViewController: UITableViewController {
 		let alert = UIAlertController(title: "Delete this thread?", message: "This will delete all messages from the thread!", preferredStyle: .alert)
 		let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [self] action in
 			database.collection(Constants.FStore.threadsCollectionName)
-				.order(by: Constants.FStore.dateField, descending: false)
+				.order(by: Constants.FStore.dateField, descending: true)
 				.getDocuments() { (threadQuerySnapshot, error) in
 					if let error = error {
 						AppDelegate.showError(error, inViewController: self)
@@ -278,7 +282,8 @@ class ThreadListViewController: UITableViewController {
 		// Get the new view controller using segue.destination.
 		if let chatVC = segue.destination as? ChatViewController {
 			// Pass the selected object to the new view controller.
-			chatVC.selectedThread = selectedThread ?? threads.first!
+			chatVC.selectedThread = selectedThread ?? threads.filter { $0.date == newThreadDate }.first
+			newThreadDate = nil
 		}
 	}
 	
