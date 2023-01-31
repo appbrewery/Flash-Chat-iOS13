@@ -90,7 +90,7 @@
                 <outlet property="rightImageView" destination="wOA-lx-36O" id="tbH-se-Gp8"/>
                 <outlet property="senderLabel" destination="lEk-Sn-BQe" id="yS5-10-Crr"/>
             </connections>
-            <point key="canvasLocation" x="274.61538461538458" y="29.857819905213269"/>
+            <point key="canvasLocation" x="39" y="123"/>
         </tableViewCell>
     </objects>
     <resources>
