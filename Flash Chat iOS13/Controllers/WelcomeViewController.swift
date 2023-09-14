@@ -15,6 +15,11 @@ class WelcomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        titleLabel.text = ""
+        let titleText = "⚡️FlashChat"
+        for letter in titleText {
+            titleLabel.text?.append(letter)
+        }
        
     }
     
